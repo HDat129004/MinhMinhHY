@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sản phẩm – Minh Minh Hưng Yên</title>
+  <meta name="description" content="Danh sách camera an ninh, thiết bị mạng, máy chủ và văn phòng phẩm chính hãng tại Minh Minh Hưng Yên.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    .products-page { padding-top: var(--nav-height); min-height: 100vh; }
+    .products-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: var(--space-xl);
+      align-items: start;
+    }
+    /* FILTER SIDEBAR */
+    .filter-sidebar {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      position: sticky;
+      top: calc(var(--nav-height) + 20px);
+    }
+    .filter-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: var(--space-md);
+      padding-bottom: var(--space-sm);
+      border-bottom: 1px solid var(--border);
+    }
+    .filter-section { margin-bottom: var(--space-lg); }
+    .filter-section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-sm);
+    }
+    .cat-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--ease);
+      margin-bottom: 4px;
+      border: 1px solid transparent;
+    }
+    .cat-chip:hover { background: var(--bg-elevated); color: var(--text-primary); }
+    .cat-chip.active { background: var(--gold-glow); color: var(--gold); border-color: var(--border-gold); }
+    .cat-chip-icon { font-size: 16px; }
+    .cat-chip-count {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--text-muted);
+      background: var(--bg-elevated);
+      padding: 1px 6px;
+      border-radius: 99px;
+    }
+    /* Products area */
+    .products-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-lg);
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+    .products-count { font-size: 14px; color: var(--text-secondary); }
+    .products-count strong { color: var(--text-primary); }
+    .sort-select {
+      padding: 8px 36px 8px 14px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-family: var(--font-main);
+      outline: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%238B9EC0' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 14px;
+      cursor: pointer;
+      transition: var(--ease);
+    }
+    .sort-select:focus { border-color: var(--gold); }
+    /* Price filter */
+    .price-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 12px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--ease);
+      margin: 3px 3px 3px 0;
+    }
+    .price-chip.active, .price-chip:hover {
+      background: var(--gold-glow);
+      border-color: var(--border-gold);
+      color: var(--gold);
+    }
+    /* Skeleton */
+    .skeleton-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .skeleton-img  { height: 180px; }
+    .skeleton-body { padding: var(--space-md); }
+    .skeleton-line { height: 12px; border-radius: 6px; margin-bottom: 10px; }
+    .skeleton-line.short { width: 60%; }
+    /* Mobile filter toggle */
+    .filter-toggle-btn {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 14px;
+      cursor: pointer;
+      margin-bottom: var(--space-lg);
+      font-family: var(--font-main);
+    }
+    @media (max-width: 768px) {
+      .products-layout { grid-template-columns: 1fr; }
+      .filter-sidebar {
+        position: fixed;
+        top: 0; left: 0; bottom: 0;
+        width: 280px;
+        z-index: 500;
+        border-radius: 0;
+        transform: translateX(-100%);
+        transition: transform var(--ease);
+        overflow-y: auto;
+      }
+      .filter-sidebar.open { transform: translateX(0); }
+      .filter-toggle-btn { display: flex; }
+      .filter-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 499;
+      }
+      .filter-overlay.active { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <div class="products-page">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="container">
+        <div class="breadcrumb">
+          <a href="index.html">Trang chủ</a>
+          <span class="breadcrumb-sep">›</span>
+          <span class="breadcrumb-current">Sản phẩm</span>
+        </div>
+        <h1 class="section-title" style="text-align:left;margin-bottom:0;">Danh sách sản phẩm</h1>
+      </div>
+    </div>
+
+    <div class="section-sm">
+      <div class="container">
+        <!-- Mobile filter toggle -->
+        <button class="filter-toggle-btn" onclick="toggleFilterSidebar()">
+          ☰ Bộ lọc & Danh mục
+        </button>
+        <div class="filter-overlay" id="filter-overlay" onclick="toggleFilterSidebar()"></div>
+
+        <div class="products-layout">
+          <!-- FILTER SIDEBAR -->
+          <aside class="filter-sidebar" id="filter-sidebar">
+            <div class="filter-title">🔍 Bộ lọc</div>
+
+            <!-- Search -->
+            <div class="filter-section">
+              <div class="search-bar">
+                <span class="search-bar-icon">🔍</span>
+                <input type="text" id="search-input" placeholder="Tìm sản phẩm..." oninput="applyFilters()">
+              </div>
+            </div>
+
+            <!-- Categories -->
+            <div class="filter-section">
+              <div class="filter-section-title">Danh mục</div>
+              <div id="cat-list"></div>
+            </div>
+
+            <!-- Price range -->
+            <div class="filter-section">
+              <div class="filter-section-title">Khoảng giá</div>
+              <div id="price-list">
+                <span class="price-chip active" data-min="0" data-max="0" onclick="selectPrice(this)">Tất cả</span>
+                <span class="price-chip" data-min="0" data-max="500000" onclick="selectPrice(this)">Dưới 500k</span>
+                <span class="price-chip" data-min="500000" data-max="2000000" onclick="selectPrice(this)">500k – 2tr</span>
+                <span class="price-chip" data-min="2000000" data-max="10000000" onclick="selectPrice(this)">2tr – 10tr</span>
+                <span class="price-chip" data-min="10000000" data-max="30000000" onclick="selectPrice(this)">10tr – 30tr</span>
+                <span class="price-chip" data-min="30000000" data-max="999999999" onclick="selectPrice(this)">Trên 30tr</span>
+              </div>
+            </div>
+
+            <!-- Reset -->
+            <button class="btn btn-ghost w-full btn-sm" onclick="resetFilters()">↺ Xóa bộ lọc</button>
+          </aside>
+
+          <!-- PRODUCTS AREA -->
+          <div>
+            <div class="products-toolbar">
+              <div class="products-count">Hiển thị <strong id="result-count">0</strong> sản phẩm</div>
+              <select class="sort-select" id="sort-select" onchange="applyFilters()">
+                <option value="newest">Mới nhất</option>
+                <option value="price-asc">Giá tăng dần</option>
+                <option value="price-desc">Giá giảm dần</option>
+                <option value="name-az">Tên A–Z</option>
+              </select>
+            </div>
+
+            <!-- Skeleton loading -->
+            <div class="products-grid" id="skeleton-grid">
+              ${Array(8).fill('').map(() => `
+                <div class="skeleton-card">
+                  <div class="skeleton skeleton-img"></div>
+                  <div class="skeleton-body">
+                    <div class="skeleton skeleton-line short"></div>
+                    <div class="skeleton skeleton-line"></div>
+                    <div class="skeleton skeleton-line" style="width:80%"></div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+
+            <!-- Actual products grid -->
+            <div class="products-grid stagger" id="products-grid" style="display:none;"></div>
+
+            <!-- Empty state -->
+            <div class="empty-state" id="empty-state" style="display:none;">
+              <div class="empty-state-icon">🔍</div>
+              <h3>Không tìm thấy sản phẩm</h3>
+              <p>Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm khác</p>
+              <button class="btn btn-outline" onclick="resetFilters()">Xóa bộ lọc</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="js/app.js"></script>
+  <script>
+    let selectedCat = 'all';
+    let selectedPriceMin = 0;
+    let selectedPriceMax = 0;
+
+    function init() {
+      // Read URL param
+      const urlParams = new URLSearchParams(window.location.search);
+      const catParam = urlParams.get('cat');
+      if (catParam) selectedCat = catParam;
+
+      renderCategoryList();
+      setTimeout(() => {
+        document.getElementById('skeleton-grid').style.display = 'none';
+        document.getElementById('products-grid').style.display = 'grid';
+        applyFilters();
+      }, 400);
+    }
+
+    function renderCategoryList() {
+      const catList = document.getElementById('cat-list');
+      catList.innerHTML = CATEGORIES.map(cat => `
+        <div class="cat-chip ${cat.id === selectedCat ? 'active' : ''}"
+             data-id="${cat.id}" onclick="selectCategory(this, '${cat.id}')">
+          <span class="cat-chip-icon">${cat.icon}</span>
+          <span>${cat.name}</span>
+          <span class="cat-chip-count">${cat.id === 'all'
+            ? Store.getProducts().filter(p => p.active).length
+            : Store.getProducts().filter(p => p.active && p.category === cat.id).length
+          }</span>
+        </div>
+      `).join('');
+    }
+
+    function selectCategory(el, catId) {
+      selectedCat = catId;
+      document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      applyFilters();
+    }
+
+    function selectPrice(el) {
+      document.querySelectorAll('.price-chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      selectedPriceMin = parseFloat(el.dataset.min);
+      selectedPriceMax = parseFloat(el.dataset.max);
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const search = document.getElementById('search-input').value.toLowerCase().trim();
+      const sort = document.getElementById('sort-select').value;
+      let products = Store.getProducts().filter(p => p.active);
+
+      // Category filter
+      if (selectedCat !== 'all') {
+        products = products.filter(p => p.category === selectedCat);
+      }
+
+      // Price filter
+      if (selectedPriceMax > 0) {
+        products = products.filter(p => p.price >= selectedPriceMin && p.price <= selectedPriceMax);
+      }
+
+      // Search filter
+      if (search) {
+        products = products.filter(p =>
+          p.name.toLowerCase().includes(search) ||
+          p.brand.toLowerCase().includes(search) ||
+          p.category.toLowerCase().includes(search)
+        );
+      }
+
+      // Sort
+      switch(sort) {
+        case 'price-asc':  products.sort((a,b) => a.price - b.price); break;
+        case 'price-desc': products.sort((a,b) => b.price - a.price); break;
+        case 'name-az':    products.sort((a,b) => a.name.localeCompare(b.name, 'vi')); break;
+        default:           products.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+      }
+
+      renderProducts(products);
+    }
+
+    function renderProducts(products) {
+      const grid = document.getElementById('products-grid');
+      const empty = document.getElementById('empty-state');
+      const count = document.getElementById('result-count');
+
+      count.textContent = products.length;
+
+      if (products.length === 0) {
+        grid.style.display = 'none';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      grid.style.display = 'grid';
+      grid.innerHTML = products.map(p => renderProductCard(p)).join('');
+    }
+
+    function resetFilters() {
+      selectedCat = 'all';
+      selectedPriceMin = 0;
+      selectedPriceMax = 0;
+      document.getElementById('search-input').value = '';
+      document.getElementById('sort-select').value = 'newest';
+      document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+      document.querySelector('.cat-chip[data-id="all"]')?.classList.add('active');
+      document.querySelectorAll('.price-chip').forEach(c => c.classList.remove('active'));
+      document.querySelector('.price-chip[data-min="0"][data-max="0"]')?.classList.add('active');
+      applyFilters();
+    }
+
+    function toggleFilterSidebar() {
+      const sidebar = document.getElementById('filter-sidebar');
+      const overlay = document.getElementById('filter-overlay');
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('active');
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

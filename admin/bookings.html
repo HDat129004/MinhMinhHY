@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản lý đặt lịch — Minh Minh Store Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+  <style>
+    /* Expand arrow and row expand styles similar to orders.html */
+    .booking-row { cursor: pointer; transition: background var(--ease); }
+    .booking-row:hover td { background: rgba(228,182,83,0.04) !important; }
+    .booking-expand-row { display: none; }
+    .booking-expand-row.open { display: table-row; }
+    .booking-expand-content {
+      padding: var(--space-lg) var(--space-xl);
+      background: var(--bg-elevated);
+      border-top: 1px dashed var(--border);
+    }
+    
+    .expand-arrow {
+      display: inline-block;
+      transition: transform var(--ease);
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+    .booking-row.expanded .expand-arrow { transform: rotate(90deg); }
+
+    /* Stats Row */
+    .booking-stats-row {
+      display: flex;
+      gap: var(--space-md);
+      margin-bottom: var(--space-lg);
+      flex-wrap: wrap;
+    }
+    .booking-stat-pill {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px var(--space-lg);
+      min-width: 140px;
+      transition: var(--ease);
+    }
+    .booking-stat-pill:hover { border-color: var(--border-gold); }
+    .booking-stat-pill .bsp-icon { font-size: 20px; }
+    .booking-stat-pill .bsp-val {
+      font-family: var(--font-ui);
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .booking-stat-pill .bsp-lbl {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Filter Tabs */
+    .filter-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 4px;
+      margin-bottom: var(--space-lg);
+      flex-wrap: wrap;
+    }
+    .filter-tab {
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--ease);
+      white-space: nowrap;
+      border: none;
+      background: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .filter-tab:hover { color: var(--text-secondary); background: var(--bg-elevated); }
+    .filter-tab.active {
+      background: var(--gold-glow);
+      color: var(--gold);
+      border: 1px solid var(--border-gold);
+    }
+    .filter-tab .tab-count {
+      background: var(--bg-elevated);
+      border-radius: var(--radius-full);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      min-width: 18px;
+      text-align: center;
+    }
+    .filter-tab.active .tab-count { background: rgba(228,182,83,0.3); color: var(--gold); }
+
+    /* Search bar */
+    .filter-bar {
+      display: flex;
+      gap: var(--space-md);
+      margin-bottom: var(--space-lg);
+      flex-wrap: wrap;
+    }
+    .filter-search-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 220px;
+    }
+    .filter-search-wrap .search-icon {
+      position: absolute;
+      left: 14px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 15px;
+      pointer-events: none;
+    }
+    .filter-search-wrap .form-control {
+      padding-left: 40px;
+    }
+
+    .booking-detail-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: var(--space-lg);
+    }
+    @media (max-width: 768px) {
+      .booking-detail-grid { grid-template-columns: 1fr; }
+    }
+    .booking-detail-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: var(--space-sm);
+    }
+
+    /* Status select and badges */
+    .status-select {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 10px;
+      cursor: pointer;
+      outline: none;
+    }
+    .status-select:hover { border-color: var(--border-gold); }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      white-space: nowrap;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px;
+      color: var(--text-muted);
+    }
+    .empty-state .empty-icon { font-size: 48px; margin-bottom: var(--space-md); }
+    .empty-state p { font-size: 14px; }
+  </style>
+</head>
+<body class="admin-body">
+
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-logo" style="display:flex;align-items:center;">
+      <div style="font-size: 2rem; font-weight: 900; letter-spacing: -2px; line-height: 1; display:flex;">
+        <span style="color: var(--orange);">M</span><span style="color: var(--green);">M</span>
+      </div>
+      <div style="border-left: 2px solid #e2e8f0; margin-left: 8px; padding-left: 8px; line-height: 1.1;">
+        <span style="display:block; font-size: 8px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Hệ thống</span>
+        <strong style="font-size: 13px; color: var(--text-primary); font-family: var(--font-ui); font-weight: 800;">QUẢN TRỊ ADMIN</strong>
+      </div>
+    </div>
+
+    <nav class="admin-nav">
+      <div class="admin-nav-section">
+        <div class="admin-nav-label">Tổng quan</div>
+        <a href="dashboard.html" class="admin-nav-item">
+          <span class="admin-nav-icon">📊</span>
+          Dashboard
+        </a>
+      </div>
+      <div class="admin-nav-section">
+        <div class="admin-nav-label">Quản lý</div>
+        <a href="products.html" class="admin-nav-item">
+          <span class="admin-nav-icon">📦</span>
+          Sản phẩm
+        </a>
+        <a href="orders.html" class="admin-nav-item">
+          <span class="admin-nav-icon">🛒</span>
+          Đơn hàng
+        </a>
+        <a href="bookings.html" class="admin-nav-item active">
+          <span class="admin-nav-icon">📅</span>
+          Đặt lịch
+        </a>
+      </div>
+      <div class="admin-nav-section">
+        <div class="admin-nav-label">Hệ thống</div>
+        <a href="#" class="admin-nav-item">
+          <span class="admin-nav-icon">⚙️</span>
+          Cài đặt
+        </a>
+      </div>
+    </nav>
+
+    <div class="admin-sidebar-footer">
+      <div class="admin-user-info">
+        <div class="admin-avatar">A</div>
+        <div>
+          <div class="admin-user-name">Administrator</div>
+          <div class="admin-user-role">Quản trị viên</div>
+        </div>
+      </div>
+      <button class="admin-logout-btn" onclick="adminLogout()">
+        🚪 Đăng xuất
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="admin-main">
+    <header class="admin-header">
+      <div class="admin-header-left">
+        <div class="admin-page-title">📅 Quản lý đặt lịch tư vấn</div>
+        <div class="admin-page-subtitle" id="booking-subtitle">Đang tải...</div>
+      </div>
+      <div class="admin-header-right">
+        <button class="btn" onclick="loadBookings()" style="background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-secondary);font-size:13px;padding:8px 16px;border-radius:var(--radius-md);">
+          🔄 Làm mới
+        </button>
+      </div>
+    </header>
+
+    <div class="admin-content">
+
+      <!-- Stats Row -->
+      <div class="booking-stats-row" id="booking-stats-row">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Filter Bar & Search -->
+      <div class="filter-bar">
+        <div class="filter-search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="form-control" id="search-input" placeholder="Tìm tên khách hàng, số điện thoại..." oninput="onSearchChange()" />
+        </div>
+        <select class="form-control" id="type-filter" style="width:220px;" onchange="onTypeFilterChange()">
+          <option value="">Tất cả loại tư vấn</option>
+          <option value="network">🏢 Mạng văn phòng</option>
+          <option value="purchase">🛒 Mua thiết bị</option>
+          <option value="wifi">📶 Lắp đặt WiFi</option>
+          <option value="repair">🔧 Sửa chữa</option>
+          <option value="other">💬 Khác</option>
+        </select>
+      </div>
+
+      <!-- Filter Tabs -->
+      <div class="filter-tabs" id="filter-tabs">
+        <button class="filter-tab active" data-status="all" onclick="filterBookings('all')">
+          Tất cả <span class="tab-count" id="tab-count-all">0</span>
+        </button>
+        <button class="filter-tab" data-status="pending" onclick="filterBookings('pending')">
+          ⏳ Chờ xử lý <span class="tab-count" id="tab-count-pending">0</span>
+        </button>
+        <button class="filter-tab" data-status="confirmed" onclick="filterBookings('confirmed')">
+          ✅ Đã xác nhận <span class="tab-count" id="tab-count-confirmed">0</span>
+        </button>
+        <button class="filter-tab" data-status="done" onclick="filterBookings('done')">
+          🎉 Hoàn thành <span class="tab-count" id="tab-count-done">0</span>
+        </button>
+        <button class="filter-tab" data-status="cancelled" onclick="filterBookings('cancelled')">
+          🚫 Đã hủy <span class="tab-count" id="tab-count-cancelled">0</span>
+        </button>
+      </div>
+
+      <!-- Bookings Table -->
+      <div class="admin-table-wrapper">
+        <div class="admin-table-header">
+          <div class="admin-table-title">Danh sách yêu cầu đặt lịch</div>
+          <span style="font-size:13px;color:var(--text-muted);">Click vào hàng để xem chi tiết nhu cầu</span>
+        </div>
+        <table class="admin-table" id="bookings-table">
+          <thead>
+            <tr>
+              <th style="width:32px;"></th>
+              <th>Mã lịch</th>
+              <th>Khách hàng</th>
+              <th>Loại tư vấn</th>
+              <th>Lịch hẹn</th>
+              <th>Trạng thái</th>
+              <th>Ngày đặt</th>
+              <th style="width:180px;">Cập nhật trạng thái</th>
+            </tr>
+          </thead>
+          <tbody id="bookings-tbody">
+            <tr>
+              <td colspan="8">
+                <div class="empty-state">
+                  <div class="empty-icon">📅</div>
+                  <p>Chưa có yêu cầu đặt lịch nào</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/admin.js"></script>
+  <script>
+    // Auth
+    requireAuth();
+
+    let allBookings = [];
+    let currentFilter = 'all';
+    let expandedBookingId = null;
+
+    const STATUS_LABELS = {
+      pending:   'Chờ xử lý',
+      confirmed: 'Đã xác nhận',
+      done:      'Hoàn thành',
+      cancelled: 'Đã hủy',
+    };
+    const STATUS_ICONS = {
+      pending:   '⏳',
+      confirmed: '✅',
+      done:      '🎉',
+      cancelled: '🚫',
+    };
+    const BOOKING_TYPES = {
+      network:  '🏢 Mạng văn phòng',
+      purchase: '🛒 Mua thiết bị',
+      wifi:     '📶 Lắp đặt WiFi',
+      repair:   '🔧 Sửa chữa',
+      other:    '💬 Khác',
+    };
+
+    function fmtDate(d) { return UI.formatDate(d); }
+    function fmtDateTime(d) { return UI.formatDateTime(d); }
+
+    // Load and render
+    function loadBookings() {
+      allBookings = AdminBookings.get();
+      updateCounts();
+      applyFilters();
+      document.getElementById('booking-subtitle').textContent = 
+        `${allBookings.length} yêu cầu đặt lịch · Cập nhật lúc ${new Date().toLocaleTimeString('vi-VN')}`;
+    }
+
+    function updateCounts() {
+      const counts = { all: allBookings.length, pending: 0, confirmed: 0, done: 0, cancelled: 0 };
+      allBookings.forEach(b => { if (counts[b.status] !== undefined) counts[b.status]++; });
+      Object.entries(counts).forEach(([k, v]) => {
+        const el = document.getElementById(`tab-count-${k}`);
+        if (el) el.textContent = v;
+      });
+
+      // Stats row
+      const statsRow = document.getElementById('booking-stats-row');
+      statsRow.innerHTML = [
+        { icon: '⏳', label: 'Chờ xử lý',   val: counts.pending,   color: 'var(--warning)'  },
+        { icon: '✅', label: 'Đã xác nhận', val: counts.confirmed, color: 'var(--info)'     },
+        { icon: '🎉', label: 'Hoàn thành',   val: counts.done,      color: 'var(--success)'  },
+        { icon: '🚫', label: 'Đã hủy',       val: counts.cancelled, color: 'var(--error)'    },
+      ].map(s => `
+        <div class="booking-stat-pill">
+          <span class="bsp-icon">${s.icon}</span>
+          <div>
+            <div class="bsp-val" style="color:${s.color};">${s.val}</div>
+            <div class="bsp-lbl">${s.label}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterBookings(status) {
+      currentFilter = status;
+      expandedBookingId = null;
+
+      // Update tabs active state
+      document.querySelectorAll('.filter-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.status === status);
+      });
+
+      applyFilters();
+    }
+
+    function onSearchChange() {
+      expandedBookingId = null;
+      applyFilters();
+    }
+
+    function onTypeFilterChange() {
+      expandedBookingId = null;
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const q = document.getElementById('search-input').value.toLowerCase().trim();
+      const type = document.getElementById('type-filter').value;
+
+      let filtered = allBookings;
+
+      // Filter by status tab
+      if (currentFilter !== 'all') {
+        filtered = filtered.filter(b => b.status === currentFilter);
+      }
+
+      // Filter by search query
+      if (q) {
+        filtered = filtered.filter(b => 
+          b.name.toLowerCase().includes(q) || 
+          b.phone.includes(q) || 
+          (b.email && b.email.toLowerCase().includes(q))
+        );
+      }
+
+      // Filter by consultation type
+      if (type) {
+        filtered = filtered.filter(b => b.type === type);
+      }
+
+      renderBookingsTable(filtered);
+    }
+
+    function renderBookingsTable(bookings) {
+      const tbody = document.getElementById('bookings-tbody');
+
+      if (!bookings.length) {
+        tbody.innerHTML = `
+          <tr><td colspan="8">
+            <div class="empty-state">
+              <div class="empty-icon">🔍</div>
+              <p>Không tìm thấy lịch hẹn phù hợp</p>
+            </div>
+          </td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = bookings.map(b => {
+        const statusOpts = ['pending','confirmed','done','cancelled'].map(st =>
+          `<option value="${st}" ${b.status === st ? 'selected' : ''}>${STATUS_ICONS[st]} ${STATUS_LABELS[st]}</option>`
+        ).join('');
+
+        const typeLabel = BOOKING_TYPES[b.type] || b.type;
+        const appointmentDate = new Date(b.date).toLocaleDateString('vi-VN', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' });
+
+        return `
+          <!-- Main row -->
+          <tr class="booking-row" id="row-${b.id}" onclick="toggleExpand('${b.id}')">
+            <td style="text-align:center;padding-right:0;">
+              <span class="expand-arrow">▶</span>
+            </td>
+            <td>
+              <span style="font-family:var(--font-ui);font-weight:700;color:var(--gold);">${b.id}</span>
+            </td>
+            <td>
+              <div class="cust-name">${b.name}</div>
+              <div class="cust-phone">${b.phone}</div>
+            </td>
+            <td>
+              <span style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px 8px;font-size:12px;font-weight:600;color:var(--text-primary);">
+                ${typeLabel}
+              </span>
+            </td>
+            <td>
+              <div style="font-weight:700;color:var(--text-primary);">${b.time}</div>
+              <div style="font-size:12px;color:var(--text-secondary);">${appointmentDate}</div>
+            </td>
+            <td>
+              <span class="status-badge status-${b.status}">${STATUS_ICONS[b.status]} ${STATUS_LABELS[b.status]}</span>
+            </td>
+            <td style="color:var(--text-muted);font-size:13px;">${fmtDateTime(b.createdAt)}</td>
+            <td onclick="event.stopPropagation();">
+              <select class="status-select" onchange="updateBookingStatus('${b.id}', this.value)">
+                ${statusOpts}
+              </select>
+            </td>
+          </tr>
+          <!-- Expand row -->
+          <tr class="booking-expand-row" id="expand-${b.id}">
+            <td colspan="8" style="padding:0;">
+              <div class="booking-expand-content">
+                ${renderBookingDetail(b)}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderBookingDetail(b) {
+      const email = b.email || '—';
+      const desc = b.desc || 'Không có mô tả chi tiết nhu cầu.';
+      const typeLabel = BOOKING_TYPES[b.type] || b.type;
+      const appointmentDate = new Date(b.date).toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' });
+
+      return `
+        <div class="booking-detail-grid">
+          <div>
+            <div class="booking-detail-title">📝 Nhu cầu &amp; Mô tả chi tiết</div>
+            <div style="font-size:14px;color:var(--text-primary);line-height:1.6;background:var(--bg-base);padding:16px;border-radius:var(--radius-md);border:1px solid var(--border);white-space:pre-wrap;">${desc}</div>
+          </div>
+          
+          <div style="display:flex;flex-direction:column;gap:12px;font-size:13px;">
+            <div class="booking-detail-title">👤 Thông tin khách hàng &amp; Lịch hẹn</div>
+            <div style="display:grid;grid-template-columns:100px 1fr;gap:6px;">
+              <span style="color:var(--text-muted);">Họ tên:</span>
+              <span style="color:var(--text-primary);font-weight:600;">${b.name}</span>
+              
+              <span style="color:var(--text-muted);">Điện thoại:</span>
+              <span style="color:var(--text-primary);font-weight:600;"><a href="tel:${b.phone}" style="color:var(--gold);">${b.phone}</a></span>
+              
+              <span style="color:var(--text-muted);">Email:</span>
+              <span style="color:var(--text-secondary);">${email}</span>
+              
+              <span style="color:var(--text-muted);">Dịch vụ:</span>
+              <span style="color:var(--text-primary);font-weight:600;">${typeLabel}</span>
+              
+              <span style="color:var(--text-muted);">Lịch hẹn:</span>
+              <span style="color:var(--gold);font-weight:700;">${b.time} - ${appointmentDate}</span>
+              
+              <span style="color:var(--text-muted);">Ngày gửi:</span>
+              <span style="color:var(--text-secondary);">${fmtDateTime(b.createdAt)}</span>
+            </div>
+            
+            <div style="display:flex;gap:8px;margin-top:8px;">
+              ${b.status === 'pending' ? `
+                <button onclick="changeStatus('${b.id}', 'confirmed')" style="padding:8px 16px;background:var(--gold-glow);border:1px solid var(--border-gold);color:var(--gold);font-size:12px;font-weight:700;border-radius:var(--radius-sm);cursor:pointer;transition:var(--ease);">
+                  ✅ Xác nhận lịch hẹn
+                </button>
+              ` : ''}
+              ${b.status === 'confirmed' ? `
+                <button onclick="changeStatus('${b.id}', 'done')" style="padding:8px 16px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:var(--success);font-size:12px;font-weight:700;border-radius:var(--radius-sm);cursor:pointer;transition:var(--ease);">
+                  🎉 Hoàn thành tư vấn
+                </button>
+              ` : ''}
+              ${b.status !== 'cancelled' && b.status !== 'done' ? `
+                <button onclick="changeStatus('${b.id}', 'cancelled')" style="padding:8px 16px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:var(--error);font-size:12px;font-weight:700;border-radius:var(--radius-sm);cursor:pointer;transition:var(--ease);">
+                  🚫 Hủy lịch
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function toggleExpand(bookingId) {
+      const row = document.getElementById(`row-${bookingId}`);
+      const expand = document.getElementById(`expand-${bookingId}`);
+      if (!row || !expand) return;
+
+      if (expandedBookingId && expandedBookingId !== bookingId) {
+        const prevRow = document.getElementById(`row-${expandedBookingId}`);
+        const prevExpand = document.getElementById(`expand-${expandedBookingId}`);
+        if (prevRow) prevRow.classList.remove('expanded');
+        if (prevExpand) prevExpand.classList.remove('open');
+      }
+
+      const isOpen = expand.classList.contains('open');
+      row.classList.toggle('expanded', !isOpen);
+      expand.classList.toggle('open', !isOpen);
+      expandedBookingId = isOpen ? null : bookingId;
+    }
+
+    function updateBookingStatus(id, newStatus) {
+      AdminBookings.updateStatus(id, newStatus);
+      UI.toast(`Đã cập nhật trạng thái lịch hẹn ${id} → ${STATUS_LABELS[newStatus]}`, 'success');
+      loadBookings();
+    }
+
+    function changeStatus(id, newStatus) {
+      updateBookingStatus(id, newStatus);
+    }
+
+    // Init
+    document.addEventListener('DOMContentLoaded', () => {
+      loadBookings();
+      initAdminNav();
+    });
+  </script>
+</body>
+</html>

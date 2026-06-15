@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đặt lịch tư vấn – Minh Minh Hưng Yên</title>
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    .booking-page { padding-top: var(--nav-height); min-height: 100vh; }
+
+    .booking-header {
+      padding: 56px 0 44px;
+      background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-base) 100%);
+      border-bottom: 1px solid var(--border);
+      position: relative; overflow: hidden; text-align: center;
+    }
+    .booking-header::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 100% at 50% 0%, rgba(228,182,83,0.1) 0%, transparent 70%);
+    }
+    .booking-header-inner { position: relative; }
+    .booking-title { font-family: var(--font-ui); font-size: clamp(28px,5vw,48px); font-weight: 800; color: var(--text-primary); margin-bottom: 12px; }
+    .booking-subtitle { font-size: 16px; color: var(--text-secondary); max-width: 500px; margin: 0 auto; line-height: 1.6; }
+
+    .booking-layout {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 40px;
+      padding: 48px 0 80px;
+      align-items: start;
+    }
+
+    .booking-form-card {
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: var(--radius-xl); overflow: hidden;
+    }
+    .form-card-header {
+      padding: 24px 32px;
+      background: linear-gradient(135deg, rgba(228,182,83,0.1), rgba(228,182,83,0.03));
+      border-bottom: 1px solid var(--border);
+    }
+    .form-card-header h2 { font-size: 20px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+    .form-card-header p  { font-size: 13px; color: var(--text-secondary); }
+    .form-card-body { padding: 32px; }
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+    .time-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .time-slot {
+      padding: 9px 6px;
+      background: var(--bg-elevated); border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 13px; font-weight: 600; color: var(--text-secondary);
+      text-align: center; cursor: pointer; transition: var(--ease);
+    }
+    .time-slot:hover, .time-slot.selected {
+      background: var(--gold-glow); border-color: var(--gold); color: var(--gold);
+    }
+
+    .btn-booking {
+      width: 100%; padding: 18px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      border: none; border-radius: var(--radius-lg);
+      color: var(--bg-base); font-size: 17px; font-weight: 800;
+      cursor: pointer; transition: var(--ease); font-family: var(--font-main);
+      box-shadow: 0 8px 30px rgba(228,182,83,0.35);
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .btn-booking:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(228,182,83,0.45); }
+
+    /* Steps */
+    .booking-steps { display: flex; align-items: center; margin-bottom: 28px; }
+    .step { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-muted); }
+    .step-num {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--bg-elevated); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; flex-shrink: 0;
+    }
+    .step.active .step-num { background: var(--gold); border-color: var(--gold); color: var(--bg-base); }
+    .step.active { color: var(--gold); font-weight: 600; }
+    .step-line { flex: 1; height: 1px; background: var(--border); margin: 0 12px; }
+
+    /* Info panel */
+    .info-panel { display: flex; flex-direction: column; gap: 20px; }
+    .info-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; transition: var(--ease); }
+    .info-card:hover { border-color: var(--border-gold); }
+    .info-card-header {
+      padding: 16px 20px;
+      background: linear-gradient(135deg, rgba(228,182,83,0.08), transparent);
+      border-bottom: 1px solid var(--border);
+      font-size: 14px; font-weight: 700; color: var(--text-primary);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .info-card-body { padding: 20px; }
+
+    .map-placeholder {
+      width: 100%; height: 160px;
+      background: var(--bg-elevated); border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 8px; margin-bottom: 16px;
+      position: relative; overflow: hidden;
+    }
+    .map-placeholder::before {
+      content: ''; position: absolute; inset: 0;
+      background:
+        linear-gradient(rgba(228,182,83,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(228,182,83,0.04) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .map-pin { position: relative; z-index: 1; font-size: 36px; }
+    .map-label { position: relative; z-index: 1; font-size: 12px; color: var(--text-muted); }
+
+    .contact-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; font-size: 14px; }
+    .contact-row:not(:last-child) { border-bottom: 1px solid var(--border); }
+    .contact-icon { font-size: 20px; width: 32px; text-align: center; flex-shrink: 0; }
+    .contact-value { color: var(--text-primary); font-weight: 500; }
+    .contact-sub { font-size: 12px; color: var(--text-muted); }
+
+    .hours-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 13px; }
+    .hours-row:not(:last-child) { border-bottom: 1px solid var(--border); }
+    .hours-day { color: var(--text-secondary); }
+    .hours-time { color: var(--text-primary); font-weight: 600; }
+    .hours-open { color: var(--success); font-size: 11px; font-weight: 700; }
+
+    .reason-card { display: flex; gap: 14px; align-items: flex-start; padding: 16px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); transition: var(--ease); }
+    .reason-card:hover { border-color: var(--border-gold); }
+    .reason-icon { width: 44px; height: 44px; flex-shrink: 0; background: var(--gold-glow); border: 1px solid var(--border-gold); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+    .reason-title { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+    .reason-desc  { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+    @media (max-width: 900px) {
+      .booking-layout { grid-template-columns: 1fr; }
+      .form-grid-2 { grid-template-columns: 1fr; }
+      .time-grid { grid-template-columns: repeat(6, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .time-grid { grid-template-columns: repeat(4, 1fr); }
+      .booking-steps { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <div class="booking-page">
+    <div class="booking-header">
+      <div class="container">
+        <div class="booking-header-inner">
+          <div class="section-eyebrow" style="margin-bottom:12px;">Dịch vụ tư vấn</div>
+          <h1 class="booking-title">📅 Đặt lịch tư vấn</h1>
+          <p class="booking-subtitle">Đội ngũ chuyên gia của chúng tôi sẵn sàng tư vấn miễn phí giúp bạn chọn giải pháp phù hợp nhất.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="booking-layout">
+        <!-- FORM -->
+        <div class="booking-form-card">
+          <div class="form-card-header">
+            <h2>📝 Điền thông tin đặt lịch</h2>
+            <p>Tất cả thông tin được bảo mật tuyệt đối</p>
+          </div>
+          <div class="form-card-body">
+            <div class="booking-steps">
+              <div class="step active"><div class="step-num">1</div><span>Thông tin</span></div>
+              <div class="step-line"></div>
+              <div class="step active"><div class="step-num">2</div><span>Lịch hẹn</span></div>
+              <div class="step-line"></div>
+              <div class="step"><div class="step-num">3</div><span>Xác nhận</span></div>
+            </div>
+
+            <form id="booking-form" onsubmit="submitBooking(event)" novalidate>
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label">Họ và tên <span style="color:var(--error)">*</span></label>
+                  <input type="text" class="form-control" id="b-name" placeholder="Nguyễn Văn A" required>
+                  <div class="form-error" id="berr-name"></div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Số điện thoại <span style="color:var(--error)">*</span></label>
+                  <input type="tel" class="form-control" id="b-phone" placeholder="0901 234 567" required>
+                  <div class="form-error" id="berr-phone"></div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" id="b-email" placeholder="email@example.com">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Loại tư vấn <span style="color:var(--error)">*</span></label>
+                <select class="form-control" id="b-type" required>
+                  <option value="">-- Chọn loại tư vấn --</option>
+                  <option value="network">🏢 Hệ thống mạng văn phòng</option>
+                  <option value="purchase">🛒 Tư vấn mua thiết bị</option>
+                  <option value="wifi">📶 Lắp đặt WiFi nhà / căn hộ</option>
+                  <option value="repair">🔧 Sửa chữa thiết bị</option>
+                  <option value="other">💬 Khác</option>
+                </select>
+                <div class="form-error" id="berr-type"></div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Mô tả nhu cầu</label>
+                <textarea class="form-control" id="b-desc" rows="4"
+                  placeholder="Mô tả chi tiết nhu cầu của bạn: diện tích, số lượng thiết bị, ngân sách dự kiến..."></textarea>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label">Ngày hẹn <span style="color:var(--error)">*</span></label>
+                  <input type="date" class="form-control" id="b-date" required>
+                  <div class="form-error" id="berr-date"></div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Giờ hẹn <span style="color:var(--error)">*</span></label>
+                  <select class="form-control" id="b-time" required>
+                    <option value="">-- Chọn giờ --</option>
+                    <option value="08:00">08:00 sáng</option>
+                    <option value="09:00">09:00 sáng</option>
+                    <option value="10:00">10:00 sáng</option>
+                    <option value="11:00">11:00 sáng</option>
+                    <option value="13:00">13:00 chiều</option>
+                    <option value="14:00">14:00 chiều</option>
+                    <option value="15:00">15:00 chiều</option>
+                    <option value="16:00">16:00 chiều</option>
+                    <option value="17:00">17:00 chiều</option>
+                    <option value="18:00">18:00 tối</option>
+                    <option value="19:00">19:00 tối</option>
+                    <option value="20:00">20:00 tối</option>
+                  </select>
+                  <div class="form-error" id="berr-time"></div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" style="margin-bottom:10px;">Chọn nhanh giờ hẹn</label>
+                <div class="time-grid">
+                  <div class="time-slot" onclick="selectTime('08:00',this)">08:00</div>
+                  <div class="time-slot" onclick="selectTime('09:00',this)">09:00</div>
+                  <div class="time-slot" onclick="selectTime('10:00',this)">10:00</div>
+                  <div class="time-slot" onclick="selectTime('11:00',this)">11:00</div>
+                  <div class="time-slot" onclick="selectTime('13:00',this)">13:00</div>
+                  <div class="time-slot" onclick="selectTime('14:00',this)">14:00</div>
+                  <div class="time-slot" onclick="selectTime('15:00',this)">15:00</div>
+                  <div class="time-slot" onclick="selectTime('16:00',this)">16:00</div>
+                  <div class="time-slot" onclick="selectTime('17:00',this)">17:00</div>
+                  <div class="time-slot" onclick="selectTime('18:00',this)">18:00</div>
+                  <div class="time-slot" onclick="selectTime('19:00',this)">19:00</div>
+                  <div class="time-slot" onclick="selectTime('20:00',this)">20:00</div>
+                </div>
+              </div>
+
+              <div style="margin-top:8px;">
+                <button type="submit" class="btn-booking">📅 Xác nhận đặt lịch</button>
+                <p style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:12px;">
+                  Tư vấn hoàn toàn miễn phí. Chúng tôi sẽ xác nhận lại qua điện thoại trong vòng 30 phút.
+                </p>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- INFO PANEL -->
+        <div class="info-panel">
+          <div class="info-card">
+            <div class="info-card-header">📍 Địa chỉ cửa hàng</div>
+            <div class="info-card-body">
+              <div class="map-placeholder">
+                <div class="map-pin">📍</div>
+                <div class="map-label">Đường Huyện Đội, Yên Mỹ, Hưng Yên</div>
+              </div>
+              <div class="contact-row">
+                <div class="contact-icon">📍</div>
+                <div>
+                  <div class="contact-value">Đường Huyện Đội, Yên Mỹ</div>
+                  <div class="contact-sub">Tỉnh Hưng Yên</div>
+                </div>
+              </div>
+              <div class="contact-row">
+                <div class="contact-icon">📞</div>
+                <div>
+                  <div class="contact-value"><a href="tel:0368386357" style="color:var(--gold);">0368 386 357</a></div>
+                  <div class="contact-sub">Hotline hỗ trợ 24/7</div>
+                </div>
+              </div>
+              <div class="contact-row">
+                <div class="contact-icon">✉️</div>
+                <div>
+                  <div class="contact-value">minhminhhungyenco.ltd@gmail.com</div>
+                  <div class="contact-sub">Email hỗ trợ doanh nghiệp</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <div class="info-card-header">🕐 Giờ làm việc</div>
+            <div class="info-card-body">
+              <div class="hours-row">
+                <span class="hours-day">Thứ 2 – Thứ 6</span>
+                <div style="text-align:right;">
+                  <span class="hours-time">08:00 – 21:00</span>
+                  <div class="hours-open">● Đang mở cửa</div>
+                </div>
+              </div>
+              <div class="hours-row">
+                <span class="hours-day">Thứ 7</span>
+                <span class="hours-time">08:00 – 20:00</span>
+              </div>
+              <div class="hours-row">
+                <span class="hours-day">Chủ nhật</span>
+                <span class="hours-time">09:00 – 18:00</span>
+              </div>
+              <div style="margin-top:12px;padding:10px;background:var(--gold-glow);border:1px solid var(--border-gold);border-radius:var(--radius-md);">
+                <p style="font-size:12px;color:var(--gold);font-weight:600;">💡 Hỗ trợ kỹ thuật khẩn cấp 24/7 qua hotline</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <div class="info-card-header">⭐ Tại sao đặt lịch tại đây?</div>
+            <div class="info-card-body" style="display:flex;flex-direction:column;gap:12px;">
+              <div class="reason-card">
+                <div class="reason-icon">🆓</div>
+                <div>
+                  <div class="reason-title">Miễn phí tư vấn</div>
+                  <div class="reason-desc">Tư vấn hoàn toàn miễn phí, không ràng buộc mua hàng</div>
+                </div>
+              </div>
+              <div class="reason-card">
+                <div class="reason-icon">👨‍💻</div>
+                <div>
+                  <div class="reason-title">Chuyên gia 5 năm kinh nghiệm</div>
+                  <div class="reason-desc">Đội ngũ kỹ sư mạng &amp; IT giàu kinh nghiệm thực tiễn</div>
+                </div>
+              </div>
+              <div class="reason-card">
+                <div class="reason-icon">💰</div>
+                <div>
+                  <div class="reason-title">Báo giá minh bạch</div>
+                  <div class="reason-desc">Báo giá chi tiết ngay tại buổi tư vấn, không phát sinh</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer-placeholder"></div>
+  <script src="js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const dateInput = document.getElementById('b-date');
+      dateInput.min = new Date().toISOString().split('T')[0];
+    });
+
+    function selectTime(time, el) {
+      document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+      el.classList.add('selected');
+      document.getElementById('b-time').value = time;
+    }
+
+    function submitBooking(e) {
+      e.preventDefault();
+      const name  = document.getElementById('b-name').value.trim();
+      const phone = document.getElementById('b-phone').value.trim();
+      const type  = document.getElementById('b-type').value;
+      const date  = document.getElementById('b-date').value;
+      const time  = document.getElementById('b-time').value;
+
+      ['name','phone','type','date','time'].forEach(f => {
+        const el = document.getElementById('berr-'+f);
+        if (el) el.textContent = '';
+      });
+
+      let valid = true;
+      if (!name) { document.getElementById('berr-name').textContent = 'Vui lòng nhập họ tên'; valid = false; }
+      if (!phone || !/^(0|\+84)[0-9]{8,9}$/.test(phone.replace(/\s/g,''))) {
+        document.getElementById('berr-phone').textContent = 'Số điện thoại không hợp lệ'; valid = false;
+      }
+      if (!type) { document.getElementById('berr-type').textContent = 'Vui lòng chọn loại tư vấn'; valid = false; }
+      if (!date) { document.getElementById('berr-date').textContent = 'Vui lòng chọn ngày hẹn'; valid = false; }
+      if (!time) { document.getElementById('berr-time').textContent = 'Vui lòng chọn giờ hẹn'; valid = false; }
+      if (!valid) return;
+
+      const bookings = JSON.parse(localStorage.getItem('mm_bookings') || '[]');
+      bookings.unshift({
+        id: 'BK' + Date.now(),
+        name, phone,
+        email: document.getElementById('b-email').value,
+        type, date, time,
+        desc: document.getElementById('b-desc').value,
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+      });
+      localStorage.setItem('mm_bookings', JSON.stringify(bookings));
+
+      UI.toast('🎉 Đặt lịch thành công! Chúng tôi sẽ liên hệ xác nhận sớm nhất.', 'success', 5000);
+      document.getElementById('booking-form').reset();
+      document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,678 @@
+<!DOCTYPE HTML>
+<html lang="vi" class="smt-html"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <style>
+
+/* Reset & Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 20px;
+    color: #333;
+    background-color: #fff;
+}
+
+/* Survey Container */
+.survey-container {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    background: #fff;
+    overflow-x: hidden;
+}
+
+/* Close Button */
+.close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transition: opacity 0.2s ease;
+}
+
+.close-button:hover {
+    opacity: 0.7;
+}
+
+/* Survey Wrapper */
+.survey-wrapper {
+    padding: 44px 20px 20px;
+}
+
+/* Question Title */
+.question-title {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 20px;
+    text-align: center;
+    color: #333;
+    margin-bottom: 24px;
+}
+
+.question-title b {
+    font-weight: 600;
+    display: block;
+}
+
+/* Emoji Rating Section */
+.emoji-rating {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 30px 0;
+    padding: 0 20px;
+    gap: 60px;
+}
+
+.emoji-option {
+    flex: 0 0 auto;
+    width: 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.emoji-rating input {
+    display: none;
+}
+
+.emoji-rating label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.emoji-svg {
+    width: 56px;
+    height: 56px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.emoji-text {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+    color: #666;
+    text-align: center;
+    white-space: nowrap;
+    display: block;
+    /* Remove position: absolute */
+    width: max-content; /* Let the text have its natural width */
+    transform: translateX(0); /* Remove transform */
+}
+
+
+/* Emoji Fill Colors */
+.emoji-fill {
+    fill: #D9D9D9;
+    transition: fill 0.2s ease;
+}
+
+/* Bad Rating */
+.emoji-rating input[value="1"]:checked + label .emoji-fill,
+.emoji-rating label[for="food-bad"]:hover .emoji-fill {
+    fill: #ff4d4f;
+}
+
+.emoji-rating input[value="1"]:checked + label .emoji-text,
+.emoji-rating label[for="food-bad"]:hover .emoji-text {
+    color: #ff4d4f;
+}
+
+/* OK Rating */
+.emoji-rating input[value="2"]:checked + label .emoji-fill,
+.emoji-rating label[for="food-ok"]:hover .emoji-fill {
+    fill: #faad14;
+}
+
+.emoji-rating input[value="2"]:checked + label .emoji-text,
+.emoji-rating label[for="food-ok"]:hover .emoji-text {
+    color: #faad14;
+}
+
+/* Good Rating */
+.emoji-rating input[value="3"]:checked + label .emoji-fill,
+.emoji-rating label[for="food-good"]:hover .emoji-fill {
+    fill: #52c41a;
+}
+
+.emoji-rating input[value="3"]:checked + label .emoji-text,
+.emoji-rating label[for="food-good"]:hover .emoji-text {
+    color: #52c41a;
+}
+
+/* Error Message */
+.error-message {
+    color: #ff4d4f;
+    font-size: 15px;
+    line-height: 20px;
+    text-align: center;
+    margin-bottom: 16px;
+    display: none;
+}
+
+/* Feedback Section */
+.feedback-input {
+    width: 100%;
+    min-height: 50px;
+    padding: 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    margin: 8px 0 24px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    line-height: 20px;
+    resize: none;
+    transition: border-color 0.3s ease;
+}
+
+.feedback-input:focus {
+    outline: none;
+    border-color: #E4B653;
+}
+
+.feedback-input::placeholder {
+    color: #999;
+    text-align: left;
+}
+
+/* Button Group */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.btn {
+    flex: 1;
+    height: 40px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 4px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-skip {
+    background-color: #f5f5f5;
+    color: #666;
+}
+
+.btn-skip:hover:not(:disabled) {
+    background-color: #e8e8e8;
+}
+
+.btn-submit {
+    background-color: #ea580c;
+    color: white;
+}
+
+.btn-submit:hover:not(:disabled) {
+    background-color: #c2410c;
+}
+
+.btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    display: none;
+    width: 24px;
+    height: 24px;
+    margin: 20px auto;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #ea580c;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Thank You Screen */
+.thank-you-screen {
+    display: none;
+    text-align: center;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.thank-you-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 24px;
+    animation: scaleIn 0.5s ease-out 0.2s both;
+}
+
+.thank-you-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #ea580c;
+    margin-bottom: 16px;
+    animation: slideUp 0.5s ease-out 0.4s both;
+}
+
+.thank-you-message {
+    font-size: 15px;
+    line-height: 20px;
+    color: #666;
+    margin-bottom: 32px;
+    animation: slideUp 0.5s ease-out 0.6s both;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Small Screen Adjustments */
+@media screen and (max-width: 360px) {
+    .emoji-rating {
+        gap: 40px;
+        padding: 0 15px;
+    }
+    
+    .emoji-option {
+        width: 48px;
+    }
+
+    .emoji-svg {
+        width: 48px;
+        height: 48px;
+    }
+
+    .emoji-text {
+        font-size: 12px;
+    }
+}	
+	</style>
+    
+    <!-- Netcore Integration -->
+    <script src="https://cdnt.netcoresmartech.com/smartech-app.js"></script>
+    <script src="https://cdnt.netcoresmartech.com/smartechclient.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdnt.netcoresmartech.com/smartech-iam-personalization.js"></script>
+</head>
+<body>
+    <div class="survey-container">
+        <!-- Close Button -->
+        <button type="button" class="close-button smt-nudge-close-action" onclick="window.location.href='index.html'">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 6L6 18" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M6 6L18 18" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+        </button>
+
+        <!-- Survey Content Wrapper -->
+        <div class="survey-wrapper">
+            <form id="surveyGoldenSpoons" method="post" action-xhr="https://amp.stripo.email/v1/form/fvuqduw/surveyappgs" novalidate="">
+                <div id="survey-content">
+                    <div class="question-title">
+                        <center><b>Bạn có hài lòng với trải nghiệm đặt bàn hôm nay?</b>
+                    </center></div>
+
+                    <!-- Emoji Rating Group -->
+                    <div class="emoji-rating">
+                        <!-- Bad Rating -->
+                        <input type="radio" id="food-bad" name="food_rating" value="1">
+                        <label for="food-bad" class="emoji-option">
+                            <svg class="emoji-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M23.9971 44.0014C12.9511 44.0014 3.99707 35.0474 3.99707 24.0014C3.99707 12.9554 12.9511 4.00143 23.9971 4.00143C35.0431 4.00143 43.9971 12.9554 43.9971 24.0014C43.9971 35.0474 35.0431 44.0014 23.9971 44.0014ZM23.9971 40.0014C28.2405 40.0014 32.3102 38.3157 35.3108 35.3151C38.3114 32.3146 39.9971 28.2449 39.9971 24.0014C39.9971 19.758 38.3114 15.6883 35.3108 12.6877C32.3102 9.68714 28.2405 8.00143 23.9971 8.00143C19.7536 8.00143 15.6839 9.68714 12.6834 12.6877C9.68278 15.6883 7.99707 19.758 7.99707 24.0014C7.99707 28.2449 9.68278 32.3146 12.6834 35.3151C15.6839 38.3157 19.7536 40.0014 23.9971 40.0014ZM13.9971 34.0014C13.9971 31.3493 15.0506 28.8057 16.926 26.9304C18.8014 25.055 21.3449 24.0014 23.9971 24.0014C26.6492 24.0014 29.1928 25.055 31.0681 26.9304C32.9435 28.8057 33.9971 31.3493 33.9971 34.0014H29.9971C29.9971 32.4101 29.3649 30.884 28.2397 29.7588C27.1145 28.6336 25.5884 28.0014 23.9971 28.0014C22.4058 28.0014 20.8796 28.6336 19.7544 29.7588C18.6292 30.884 17.9971 32.4101 17.9971 34.0014H13.9971ZM15.9971 22.0014C15.2014 22.0014 14.4384 21.6854 13.8757 21.1228C13.3131 20.5601 12.9971 19.7971 12.9971 19.0014C12.9971 18.2058 13.3131 17.4427 13.8757 16.8801C14.4384 16.3175 15.2014 16.0014 15.9971 16.0014C16.7927 16.0014 17.5558 16.3175 18.1184 16.8801C18.681 17.4427 18.9971 18.2058 18.9971 19.0014C18.9971 19.7971 18.681 20.5601 18.1184 21.1228C17.5558 21.6854 16.7927 22.0014 15.9971 22.0014ZM31.9971 22.0014C31.2014 22.0014 30.4384 21.6854 29.8757 21.1228C29.3131 20.5601 28.9971 19.7971 28.9971 19.0014C28.9971 18.2058 29.3131 17.4427 29.8757 16.8801C30.4384 16.3175 31.2014 16.0014 31.9971 16.0014C32.7927 16.0014 33.5558 16.3175 34.1184 16.8801C34.681 17.4427 34.9971 18.2058 34.9971 19.0014C34.9971 19.7971 34.681 20.5601 34.1184 21.1228C33.5558 21.6854 32.7927 22.0014 31.9971 22.0014Z" class="emoji-fill"></path>
+                            </svg>
+                            <span class="emoji-text">Cần cải thiện</span>
+                        </label>
+
+                        <!-- OK Rating -->
+                        <input type="radio" id="food-ok" name="food_rating" value="2">
+                        <label for="food-ok" class="emoji-option">
+                            <svg class="emoji-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M23.9971 44.0014C12.9511 44.0014 3.99707 35.0474 3.99707 24.0014C3.99707 12.9554 12.9511 4.00143 23.9971 4.00143C35.0431 4.00143 43.9971 12.9554 43.9971 24.0014C43.9971 35.0474 35.0431 44.0014 23.9971 44.0014ZM23.9971 40.0014C28.2405 40.0014 32.3102 38.3157 35.3108 35.3151C38.3114 32.3146 39.9971 28.2449 39.9971 24.0014C39.9971 19.758 38.3114 15.6883 35.3108 12.6877C32.3102 9.68714 28.2405 8.00143 23.9971 8.00143C19.7536 8.00143 15.6839 9.68714 12.6834 12.6877C9.68278 15.6883 7.99707 19.758 7.99707 24.0014C7.99707 28.2449 9.68278 32.3146 12.6834 35.3151C15.6839 38.3157 19.7536 40.0014 23.9971 40.0014ZM15.9971 22.0014C15.2014 22.0014 14.4384 21.6854 13.8757 21.1228C13.3131 20.5601 12.9971 19.7971 12.9971 19.0014C12.9971 18.2058 13.3131 17.4427 13.8757 16.8801C14.4384 16.3175 15.2014 16.0014 15.9971 16.0014C16.7927 16.0014 17.5558 16.3175 18.1184 16.8801C18.681 17.4427 18.9971 18.2058 18.9971 19.0014C18.9971 19.7971 18.681 20.5601 18.1184 21.1228C17.5558 21.6854 16.7927 22.0014 15.9971 22.0014ZM31.9971 22.0014C31.2014 22.0014 30.4384 21.6854 29.8757 21.1228C29.3131 20.5601 28.9971 19.7971 28.9971 19.0014C28.9971 18.2058 29.3131 17.4427 29.8757 16.8801C30.4384 16.3175 31.2014 16.0014 31.9971 16.0014C32.7927 16.0014 33.5558 16.3175 34.1184 16.8801C34.681 17.4427 34.9971 18.2058 34.9971 19.0014C34.9971 19.7971 34.681 20.5601 34.1184 21.1228C33.5558 21.6854 32.7927 22.0014 31.9971 22.0014ZM16.1624 27.1918L17.7353 28.427C18.9359 29.3699 21.0217 30.4526 24.0307 30.4986C27.0354 30.5446 29.5953 29.3455 30.7649 28.427L32.3378 27.1918L34.8083 30.3377L33.2353 31.573C31.4049 33.0104 27.9647 34.5592 23.9695 34.4981C19.9785 34.4371 17.0643 32.986 15.2649 31.573L13.6919 30.3377L16.1624 27.1918Z" class="emoji-fill"></path>
+                            </svg>
+                            <span class="emoji-text">Ổn</span>
+                        </label>
+
+                        <!-- Good Rating -->
+                        <input type="radio" id="food-good" name="food_rating" value="3">
+                       <label for="food-good" class="emoji-option">
+                           <svg class="emoji-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                               <path d="M23.9971 44.0014C12.9511 44.0014 3.99707 35.0474 3.99707 24.0014C3.99707 12.9554 12.9511 4.00143 23.9971 4.00143C35.0431 4.00143 43.9971 12.9554 43.9971 24.0014C43.9971 35.0474 35.0431 44.0014 23.9971 44.0014ZM23.9971 40.0014C28.2405 40.0014 32.3102 38.3157 35.3108 35.3151C38.3114 32.3146 39.9971 28.2449 39.9971 24.0014C39.9971 19.758 38.3114 15.6883 35.3108 12.6877C32.3102 9.68714 28.2405 8.00143 23.9971 8.00143C19.7536 8.00143 15.6839 9.68714 12.6834 12.6877C9.68278 15.6883 7.99707 19.758 7.99707 24.0014C7.99707 28.2449 9.68278 32.3146 12.6834 35.3151C15.6839 38.3157 19.7536 40.0014 23.9971 40.0014ZM15.9971 22.0014C15.2014 22.0014 14.4384 21.6854 13.8757 21.1228C13.3131 20.5601 12.9971 19.7971 12.9971 19.0014C12.9971 18.2058 13.3131 17.4427 13.8757 16.8801C14.4384 16.3175 15.2014 16.0014 15.9971 16.0014C16.7927 16.0014 17.5558 16.3175 18.1184 16.8801C18.681 17.4427 18.9971 18.2058 18.9971 19.0014C18.9971 19.7971 18.681 20.5601 18.1184 21.1228C17.5558 21.6854 16.7927 22.0014 15.9971 22.0014ZM31.9971 22.0014C31.2014 22.0014 30.4384 21.6854 29.8757 21.1228C29.3131 20.5601 28.9971 19.7971 28.9971 19.0014C28.9971 18.2058 29.3131 17.4427 29.8757 16.8801C30.4384 16.3175 31.2014 16.0014 31.9971 16.0014C32.7927 16.0014 33.5558 16.3175 34.1184 16.8801C34.681 17.4427 34.9971 18.2058 34.9971 19.0014C34.9971 19.7971 34.681 20.5601 34.1184 21.1228C33.5558 21.6854 32.7927 22.0014 31.9971 22.0014ZM34.5 26H13.5C13.9118 28.4 15.9706 35 24.6176 35C32.0294 35 33.6765 28.4 34.5 26Z" class="emoji-fill"></path>
+                           </svg>
+                           <span class="emoji-text">Tốt</span>
+                       </label>
+                   </div>
+                   <div class="error-message" id="rating-error">Vui lòng chọn mức độ hài lòng</div>
+
+                   <!-- Feedback Section -->
+                   <div class="question-title">
+                       <center><b>Hãy cho chúng mình biết điều gì có thể giúp cải thiện trải nghiệm của bạn</b>
+                   </center></div>
+                   <textarea class="feedback-input" id="feedback" name="feedback" placeholder="Chia sẻ trải nghiệm của bạn..."></textarea>
+
+                   <!-- Button Group -->
+                   <div class="button-group">
+                       <button type="button" class="btn btn-skip smt-nudge-close-action" onclick="window.location.href='index.html'">Bỏ qua</button>
+                       <button type="button" class="btn btn-submit smt-nudge-action" onclick="submitSurvey()">Gửi đánh giá</button>
+                   </div>
+
+                   <!-- Loading Spinner -->
+                   <div class="loading-spinner" id="loading-spinner"></div>
+               </div>
+
+               <!-- Thank You Screen -->
+               <div class="thank-you-screen" id="thank-you-screen">
+                   <div class="thank-you-icon">
+                       <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="40" cy="40" r="40" fill="#ea580c" fill-opacity="0.1"></circle>
+                            <path d="M34.5 47.5L25 38L22 41L34.5 53.5L58.5 29.5L55.5 26.5L34.5 47.5Z" fill="#ea580c"></path>
+                       </svg>
+                   </div>
+                   <h2 class="thank-you-title">Cảm ơn bạn đã đánh giá!</h2>
+                   <p class="thank-you-message">Chúng tôi trân trọng mọi ý kiến đóng góp và sẽ không ngừng cải thiện để phục vụ bạn tốt hơn.</p>
+               </div>
+           </form>
+       </div>
+   </div>
+
+   <!-- Netcore DIY Integration -->
+   <script src="https://nudges3.hansel.io/px-diy.js?v=1.3.0" id="px-diy-html"></script>
+
+   <script>
+       // Constants
+       const CONSTANTS = {
+           MAX_LENGTH: 400,
+           TIMEOUT: 10000,
+           THANK_YOU_DELAY: 2000,
+           PANEL_ID: 'ADGMOT35CHFLVDHBJNIG50K968ATNH2U64O9DCMJJB5NUPEKAJIG',
+           WEBSITE_ID: '5cdd4beada7e144a35368d6880304576',
+           LOCAL_STORAGE_KEY: 'surveyProgress',
+           SURVEY_NAME: 'khảo sát booking app'
+       };
+
+       // State Management
+       let startTime = Date.now();
+       let isSubmitting = false;
+
+       // Initialize Smartech
+       smartech('create', CONSTANTS.PANEL_ID);
+       smartech('register', CONSTANTS.WEBSITE_ID);
+
+       // DOM Elements Helper
+       const elements = {
+           form: () => document.getElementById('surveyGoldenSpoons'),
+           submitButton: () => document.querySelector('.btn-submit'),
+           spinner: () => document.getElementById('loading-spinner'),
+           surveyContent: () => document.getElementById('survey-content'),
+           thankYouScreen: () => document.getElementById('thank-you-screen'),
+           feedback: () => document.getElementById('feedback'),
+           ratingError: () => document.getElementById('rating-error')
+       };
+
+       // Form Validation
+       function validateForm() {
+           const ratingError = elements.ratingError();
+           const rating = document.querySelector('input[name="food_rating"]:checked');
+           
+           if (!rating) {
+               ratingError.style.display = 'block';
+               return false;
+           }
+           
+           ratingError.style.display = 'none';
+           
+           const feedback = elements.feedback()?.value.trim();
+           if (feedback && feedback.length > CONSTANTS.MAX_LENGTH) {
+               return false;
+           }
+           
+           return true;
+       }
+
+       // UI Helpers
+       function toggleLoading(show) {
+           const spinner = elements.spinner();
+           const submitButton = elements.submitButton();
+           
+           if (spinner) {
+               spinner.style.display = show ? 'block' : 'none';
+           }
+           
+           if (submitButton) {
+               submitButton.disabled = show;
+           }
+       }
+
+       function showThankYouScreen() {
+           const surveyContent = elements.surveyContent();
+           const thankYouScreen = elements.thankYouScreen();
+           
+           if (surveyContent) {
+               surveyContent.style.display = 'none';
+           }
+           
+           if (thankYouScreen) {
+               thankYouScreen.style.display = 'block';
+               thankYouScreen.scrollIntoView({ behavior: 'smooth' });
+           }
+       }
+
+       // Progress Management
+       function saveProgress() {
+           try {
+               const formData = collectFormData();
+               localStorage.setItem(CONSTANTS.LOCAL_STORAGE_KEY, JSON.stringify(formData));
+           } catch (error) {
+               console.error('Error saving progress:', error);
+           }
+       }
+
+       function restoreProgress() {
+           try {
+               const saved = localStorage.getItem(CONSTANTS.LOCAL_STORAGE_KEY);
+               if (saved) {
+                   const data = JSON.parse(saved);
+                   restoreFormData(data);
+               }
+           } catch (error) {
+               console.error('Error restoring progress:', error);
+           }
+       }
+
+       function collectFormData() {
+           return {
+               rating: document.querySelector('input[name="food_rating"]:checked')?.value || '',
+               feedback: elements.feedback()?.value.trim() || ''
+           };
+       }
+
+       function restoreFormData(data) {
+           if (data.rating) {
+               const ratingInput = document.querySelector(`input[name="food_rating"][value="${data.rating}"]`);
+               if (ratingInput) ratingInput.checked = true;
+           }
+           
+           if (data.feedback && elements.feedback()) {
+               elements.feedback().value = data.feedback;
+           }
+       }
+
+       // Form Submission
+       async function submitSurvey() {
+           if (isSubmitting) return;
+           if (!validateForm()) return;
+
+           const form = elements.form();
+           if (!form) return;
+
+           isSubmitting = true;
+           toggleLoading(true);
+
+           try {
+               const now = new Date();
+               const vnTime = new Date(now.getTime());
+               
+               const formData = new FormData(form);
+               
+               // Set form data
+               formData.set('rating', document.querySelector('input[name="food_rating"]:checked')?.value || '');
+               formData.set('feedback', elements.feedback()?.value.trim() || '');
+               formData.set('mobile', appSmartechSDKData.identity);
+               formData.set('survey_name', CONSTANTS.SURVEY_NAME);
+
+               // Send analytics data
+               smartech('identify', appSmartechSDKData.identity);
+               smartech('dispatch', 'survey_complete', {
+                   'survey_name': CONSTANTS.SURVEY_NAME,
+                   'source': 'in-app banner',
+                   'completion_time': Math.floor((Date.now() - startTime) / 1000),
+                   'survey_status': 'completed',
+                   'rating': parseInt(formData.get('rating')) || 0,
+                   'customer_feedback': formData.get('feedback'),
+                   'submit_date': vnTime.toISOString().split('T')[0],
+                   'submit_time': vnTime.toTimeString().split(' ')[0]
+               });
+
+               // Show thank you screen immediately
+               showThankYouScreen();
+
+               // Send form data to server
+               try {
+                   const response = await fetch(form.getAttribute('action-xhr'), {
+                       method: 'POST',
+                       body: formData
+                   });
+                   
+                   if (!response.ok) {
+                       console.error('Form submission failed but user flow continued');
+                   }
+               } catch (error) {
+                   console.error('Form submission error but user flow continued:', error);
+               }
+
+               // Clear saved progress
+               localStorage.removeItem(CONSTANTS.LOCAL_STORAGE_KEY);
+
+               // Close popup after delay
+               setTimeout(() => {
+                   if (window.closePopup && typeof window.closePopup === 'function') {
+                       window.closePopup();
+                   }
+               }, CONSTANTS.THANK_YOU_DELAY);
+
+           } catch (error) {
+               console.error('Error in submit flow:', error);
+               alert('Có lỗi xảy ra. Vui lòng thử lại sau.');
+           } finally {
+               isSubmitting = false;
+               toggleLoading(false);
+           }
+       }
+
+       // Text area character limit
+       function handleTextAreaInput(event) {
+           const textarea = event.target;
+           if (textarea.value.length > CONSTANTS.MAX_LENGTH) {
+               textarea.value = textarea.value.slice(0, CONSTANTS.MAX_LENGTH);
+           }
+           saveProgress();
+       }
+
+       // Emoji Rating Handler
+       function handleRatingChange(event) {
+           if (event.target.name === 'food_rating') {
+               elements.ratingError().style.display = 'none';
+               saveProgress();
+           }
+       }
+
+       // Initialize
+       document.addEventListener('DOMContentLoaded', () => {
+           // Restore saved progress
+           restoreProgress();
+           
+           // Setup textarea handler
+           const textarea = elements.feedback();
+           if (textarea) {
+               textarea.addEventListener('input', handleTextAreaInput);
+           }
+           
+           // Setup rating change handler
+           const ratingInputs = document.querySelectorAll('input[name="food_rating"]');
+           ratingInputs.forEach(input => {
+               input.addEventListener('change', handleRatingChange);
+           });
+           
+           // Setup form autosave
+           const form = elements.form();
+           if (form) {
+               form.addEventListener('change', saveProgress);
+           }
+           
+           // Setup window events
+           window.addEventListener('beforeunload', saveProgress);
+       });
+   </script>
+
+</body></html>

@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản lý sản phẩm — Minh Minh Store Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+  <style>
+    /* Status badge */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      white-space: nowrap;
+    }
+    .badge-active   { background: rgba(16,185,129,0.15); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
+    .badge-inactive { background: rgba(74,87,112,0.2); color: var(--text-muted); border: 1px solid rgba(74,87,112,0.3); }
+
+    /* Search + Filter bar */
+    .filter-bar {
+      display: flex;
+      gap: var(--space-md);
+      margin-bottom: var(--space-lg);
+      flex-wrap: wrap;
+    }
+    .filter-search-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 220px;
+    }
+    .filter-search-wrap .search-icon {
+      position: absolute;
+      left: 14px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 15px;
+      pointer-events: none;
+    }
+    .filter-search-wrap .form-control {
+      padding-left: 40px;
+    }
+
+    /* Modal overlay */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--ease);
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .modal-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      width: 100%;
+      max-width: 680px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(24px) scale(0.97);
+      transition: transform var(--ease);
+      box-shadow: var(--shadow-lg);
+    }
+    .modal-overlay.open .modal-box {
+      transform: translateY(0) scale(1);
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-lg) var(--space-xl);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg-surface);
+      z-index: 1;
+    }
+    .modal-title {
+      font-family: var(--font-ui);
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .modal-close {
+      width: 36px; height: 36px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: var(--ease);
+    }
+    .modal-close:hover { color: var(--error); border-color: rgba(239,68,68,0.3); }
+    .modal-body { padding: var(--space-xl); }
+    .modal-footer {
+      display: flex;
+      gap: var(--space-md);
+      justify-content: flex-end;
+      padding: var(--space-lg) var(--space-xl);
+      border-top: 1px solid var(--border);
+      background: var(--bg-surface);
+      position: sticky;
+      bottom: 0;
+    }
+
+    /* Toggle switch */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-md) 0;
+    }
+    .toggle-switch {
+      position: relative;
+      width: 48px; height: 26px;
+      flex-shrink: 0;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: var(--ease);
+    }
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      left: 3px; top: 3px;
+      width: 18px; height: 18px;
+      background: var(--text-muted);
+      border-radius: 50%;
+      transition: var(--ease);
+    }
+    .toggle-switch input:checked + .toggle-slider { background: rgba(16,185,129,0.2); border-color: var(--success); }
+    .toggle-switch input:checked + .toggle-slider::before { background: var(--success); transform: translateX(22px); }
+
+    /* Icon preview */
+    .icon-preview {
+      width: 56px; height: 56px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 48px var(--space-lg);
+      color: var(--text-muted);
+    }
+    .empty-state .empty-icon { font-size: 48px; margin-bottom: var(--space-md); }
+    .empty-state p { font-size: 14px; }
+
+    /* Product count badge */
+    .product-count-badge {
+      display: inline-flex;
+      align-items: center;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      padding: 4px 12px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+    .product-count-badge strong { color: var(--gold); margin-right: 4px; }
+
+    /* Specs hint */
+    .spec-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      background: var(--bg-elevated);
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body class="admin-body">
+
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-logo" style="display:flex;align-items:center;">
+      <div style="font-size: 2rem; font-weight: 900; letter-spacing: -2px; line-height: 1; display:flex;">
+        <span style="color: var(--orange);">M</span><span style="color: var(--green);">M</span>
+      </div>
+      <div style="border-left: 2px solid #e2e8f0; margin-left: 8px; padding-left: 8px; line-height: 1.1;">
+        <span style="display:block; font-size: 8px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Hệ thống</span>
+        <strong style="font-size: 13px; color: var(--text-primary); font-family: var(--font-ui); font-weight: 800;">QUẢN TRỊ ADMIN</strong>
+      </div>
+    </div>
+
+    <nav class="admin-nav">
+      <div class="admin-nav-section">
+        <div class="admin-nav-label">Tổng quan</div>
+        <a href="dashboard.html" class="admin-nav-item">
+          <span class="admin-nav-icon">📊</span>
+          Dashboard
+        </a>
+      </div>
+      <div class="admin-nav-section">
+        <div class="admin-nav-label">Quản lý</div>
+        <a href="products.html" class="admin-nav-item active">
+          <span class="admin-nav-icon">📦</span>
+          Sản phẩm
+        </a>
+        <a href="orders.html" class="admin-nav-item">
+          <span class="admin-nav-icon">🛒</span>
+          Đơn hàng
+        </a>
+        <a href="bookings.html" class="admin-nav-item">
+          <span class="admin-nav-icon">📅</span>
+          Đặt lịch
+        </a>
+      </div>
+      <div class="admin-nav-section">
+        <div class="admin-nav-label">Hệ thống</div>
+        <a href="#" class="admin-nav-item">
+          <span class="admin-nav-icon">⚙️</span>
+          Cài đặt
+        </a>
+      </div>
+    </nav>
+
+    <div class="admin-sidebar-footer">
+      <div class="admin-user-info">
+        <div class="admin-avatar">A</div>
+        <div>
+          <div class="admin-user-name">Administrator</div>
+          <div class="admin-user-role">Quản trị viên</div>
+        </div>
+      </div>
+      <button class="admin-logout-btn" onclick="adminLogout()">
+        🚪 Đăng xuất
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="admin-main">
+    <header class="admin-header">
+      <div class="admin-header-left">
+        <div class="admin-page-title">📦 Quản lý sản phẩm</div>
+        <div class="admin-page-subtitle" id="product-subtitle">Đang tải...</div>
+      </div>
+      <div class="admin-header-right">
+        <button class="btn btn-primary" onclick="openAddModal()" style="display:flex;align-items:center;gap:8px;">
+          ➕ Thêm sản phẩm
+        </button>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="filter-search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="form-control" id="search-input" placeholder="Tìm kiếm tên sản phẩm, thương hiệu..." oninput="filterProducts()" />
+        </div>
+        <select class="form-control" id="category-filter" style="width:200px;" onchange="filterProducts()">
+          <option value="">Tất cả danh mục</option>
+          <option>Router WiFi</option>
+          <option>Switch mạng</option>
+          <option>Access Point</option>
+          <option>Modem Router</option>
+          <option>Laptop</option>
+          <option>Máy tính để bàn</option>
+          <option>RAM &amp; Ổ cứng</option>
+          <option>Phụ kiện</option>
+        </select>
+        <select class="form-control" id="status-filter" style="width:160px;" onchange="filterProducts()">
+          <option value="">Tất cả trạng thái</option>
+          <option value="active">Đang bán</option>
+          <option value="inactive">Ngừng bán</option>
+        </select>
+      </div>
+
+      <!-- Products Table -->
+      <div class="admin-table-wrapper">
+        <div class="admin-table-header">
+          <div class="admin-table-title">Danh sách sản phẩm</div>
+          <div id="product-count-badge" class="product-count-badge"><strong>0</strong> sản phẩm</div>
+        </div>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th style="width:56px;">Ảnh</th>
+              <th>Tên sản phẩm</th>
+              <th>Danh mục</th>
+              <th>Giá bán</th>
+              <th>Tồn kho</th>
+              <th>Trạng thái</th>
+              <th>Ngày tạo</th>
+              <th style="width:100px;text-align:center;">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="products-tbody">
+            <tr>
+              <td colspan="8" style="text-align:center;color:var(--text-muted);padding:48px;">
+                <div class="empty-state">
+                  <div class="empty-icon">📦</div>
+                  <p>Chưa có sản phẩm nào</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div><!-- end admin-content -->
+  </div><!-- end admin-main -->
+
+  <!-- PRODUCT MODAL -->
+  <div class="modal-overlay" id="product-modal" onclick="handleModalOverlayClick(event)">
+    <div class="modal-box" id="modal-box">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-title">Thêm sản phẩm</div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <input type="hidden" id="edit-product-id" value="" />
+
+        <!-- Icon + Name row -->
+        <div style="display:flex;gap:var(--space-md);align-items:flex-start;margin-bottom:var(--space-lg);">
+          <div>
+            <label class="form-label" style="margin-bottom:6px;display:block;">Icon</label>
+            <div class="icon-preview" id="icon-preview-box">📦</div>
+          </div>
+          <div style="flex:1;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label" for="p-name">Tên sản phẩm <span style="color:var(--error);">*</span></label>
+              <input type="text" id="p-name" class="form-control" placeholder="Nhập tên sản phẩm" required />
+            </div>
+          </div>
+        </div>
+
+        <!-- Category + Brand -->
+        <div class="form-row" style="margin-bottom:var(--space-lg);">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="p-category">Danh mục <span style="color:var(--error);">*</span></label>
+            <select id="p-category" class="form-control" required>
+              <option value="">Chọn danh mục</option>
+              <option>Router WiFi</option>
+              <option>Switch mạng</option>
+              <option>Access Point</option>
+              <option>Modem Router</option>
+              <option>Laptop</option>
+              <option>Máy tính để bàn</option>
+              <option>RAM &amp; Ổ cứng</option>
+              <option>Phụ kiện</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="p-brand">Thương hiệu</label>
+            <input type="text" id="p-brand" class="form-control" placeholder="TP-Link, Dell, ASUS..." />
+          </div>
+        </div>
+
+        <!-- Price + Original Price -->
+        <div class="form-row" style="margin-bottom:var(--space-lg);">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="p-price">Giá bán (VNĐ) <span style="color:var(--error);">*</span></label>
+            <input type="number" id="p-price" class="form-control" placeholder="0" min="0" required />
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="p-original-price">Giá gốc (VNĐ)</label>
+            <input type="number" id="p-original-price" class="form-control" placeholder="Để trống nếu không giảm giá" min="0" />
+          </div>
+        </div>
+
+        <!-- Stock + Icon -->
+        <div class="form-row" style="margin-bottom:var(--space-lg);">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="p-stock">Tồn kho</label>
+            <input type="number" id="p-stock" class="form-control" placeholder="0" min="0" value="0" />
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="p-icon">Icon Emoji</label>
+            <input type="text" id="p-icon" class="form-control" placeholder="📦" maxlength="4" oninput="updateIconPreview(this.value)" />
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label class="form-label" for="p-desc">Mô tả sản phẩm</label>
+          <textarea id="p-desc" class="form-control" rows="3" placeholder="Nhập mô tả chi tiết sản phẩm..."></textarea>
+        </div>
+
+        <!-- Specs -->
+        <div class="form-group">
+          <label class="form-label" for="p-specs">Thông số kỹ thuật (JSON)</label>
+          <textarea id="p-specs" class="form-control" rows="4" placeholder='{"Chuẩn WiFi": "WiFi 6", "Tốc độ": "5400 Mbps"}'></textarea>
+          <div class="spec-hint">💡 Định dạng: {"Tên thông số": "Giá trị", "CPU": "Intel i5", ...}</div>
+        </div>
+
+        <!-- Active toggle -->
+        <div class="toggle-row">
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--text-primary);">Trạng thái bán hàng</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Bật để sản phẩm xuất hiện trên cửa hàng</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="p-active" checked />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div><!-- end modal-body -->
+
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal()" style="background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-secondary);padding:10px 24px;border-radius:var(--radius-md);font-weight:600;">
+          Hủy
+        </button>
+        <button class="btn btn-primary" onclick="saveProduct()" id="save-btn" style="padding:10px 28px;">
+          💾 Lưu sản phẩm
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/admin.js"></script>
+  <script>
+    // Auth
+    requireAuth();
+
+    let allProducts = [];
+
+    // ---- Load Products ----
+    function loadProducts() {
+      allProducts = Store.getProducts();
+      document.getElementById('product-subtitle').textContent = `${allProducts.length} sản phẩm trong kho`;
+      filterProducts();
+    }
+
+    // ---- Filter/Render ----
+    function filterProducts() {
+      const q = document.getElementById('search-input').value.toLowerCase();
+      const cat = document.getElementById('category-filter').value;
+      const statusF = document.getElementById('status-filter').value;
+
+      let filtered = allProducts.filter(p => {
+        const matchQ = !q || p.name.toLowerCase().includes(q) || (p.brand || '').toLowerCase().includes(q);
+        const matchCat = !cat || p.category === cat;
+        const matchStatus = !statusF || (statusF === 'active' ? p.active : !p.active);
+        return matchQ && matchCat && matchStatus;
+      });
+
+      renderProductsTable(filtered);
+      const badge = document.getElementById('product-count-badge');
+      badge.innerHTML = `<strong>${filtered.length}</strong>&nbsp;sản phẩm`;
+    }
+
+    function renderProductsTable(products) {
+      const tbody = document.getElementById('products-tbody');
+      if (!products.length) {
+        tbody.innerHTML = `
+          <tr><td colspan="8">
+            <div class="empty-state">
+              <div class="empty-icon">🔍</div>
+              <p>Không tìm thấy sản phẩm phù hợp</p>
+            </div>
+          </td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = products.map(p => {
+        const stockClass = p.stock === 0 ? 'color:var(--error);' : p.stock < 5 ? 'color:var(--warning);' : 'color:var(--success);';
+        return `
+          <tr>
+            <td>
+              <div class="table-product-img">${p.images?.[0] || '📦'}</div>
+            </td>
+            <td>
+              <div class="table-product-info" style="gap:0;">
+                <div>
+                  <div class="table-product-name">${p.name}</div>
+                  <div class="table-product-sku">${p.brand || '—'}</div>
+                </div>
+              </div>
+            </td>
+            <td style="color:var(--text-secondary);">${p.category}</td>
+            <td>
+              <div style="font-weight:700;color:var(--text-primary);">${UI.formatPrice(p.price)}</div>
+              ${p.originalPrice && p.originalPrice > p.price ? `<div style="font-size:11px;color:var(--text-muted);text-decoration:line-through;">${UI.formatPrice(p.originalPrice)}</div>` : ''}
+            </td>
+            <td><span style="${stockClass}font-weight:700;">${p.stock}</span></td>
+            <td>
+              <span class="status-badge ${p.active ? 'badge-active' : 'badge-inactive'}">
+                ${p.active ? '● Đang bán' : '○ Ngừng bán'}
+              </span>
+            </td>
+            <td style="color:var(--text-muted);font-size:13px;">${UI.formatDate(p.createdAt)}</td>
+            <td>
+              <div class="table-actions" style="justify-content:center;">
+                <button class="btn-table-action" onclick="openEditModal('${p.id}')" title="Chỉnh sửa">✏️</button>
+                <button class="btn-table-action delete" onclick="deleteProduct('${p.id}')" title="Xóa">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // ---- Modal ----
+    function openAddModal() {
+      document.getElementById('modal-title').textContent = '➕ Thêm sản phẩm mới';
+      document.getElementById('edit-product-id').value = '';
+      document.getElementById('p-name').value = '';
+      document.getElementById('p-category').value = '';
+      document.getElementById('p-brand').value = '';
+      document.getElementById('p-price').value = '';
+      document.getElementById('p-original-price').value = '';
+      document.getElementById('p-stock').value = '0';
+      document.getElementById('p-icon').value = '';
+      document.getElementById('p-desc').value = '';
+      document.getElementById('p-specs').value = '';
+      document.getElementById('p-active').checked = true;
+      updateIconPreview('');
+      openModal();
+    }
+
+    function openEditModal(id) {
+      const p = Store.getProduct(id);
+      if (!p) return;
+      document.getElementById('modal-title').textContent = '✏️ Chỉnh sửa sản phẩm';
+      document.getElementById('edit-product-id').value = id;
+      document.getElementById('p-name').value = p.name || '';
+      document.getElementById('p-category').value = p.category || '';
+      document.getElementById('p-brand').value = p.brand || '';
+      document.getElementById('p-price').value = p.price || '';
+      document.getElementById('p-original-price').value = p.originalPrice || '';
+      document.getElementById('p-stock').value = p.stock || 0;
+      document.getElementById('p-icon').value = p.images?.[0] || '';
+      document.getElementById('p-desc').value = p.description || '';
+      document.getElementById('p-specs').value = p.specs ? JSON.stringify(p.specs, null, 2) : '';
+      document.getElementById('p-active').checked = p.active !== false;
+      updateIconPreview(p.images?.[0] || '');
+      openModal();
+    }
+
+    function openModal() {
+      document.getElementById('product-modal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('product-modal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function handleModalOverlayClick(e) {
+      if (e.target === document.getElementById('product-modal')) closeModal();
+    }
+
+    function updateIconPreview(val) {
+      document.getElementById('icon-preview-box').textContent = val || '📦';
+    }
+
+    // ---- Save Product ----
+    function saveProduct() {
+      const id = document.getElementById('edit-product-id').value;
+      const name = document.getElementById('p-name').value.trim();
+      const category = document.getElementById('p-category').value;
+      const price = parseFloat(document.getElementById('p-price').value);
+
+      if (!name) { alert('Vui lòng nhập tên sản phẩm.'); return; }
+      if (!category) { alert('Vui lòng chọn danh mục.'); return; }
+      if (!price || price <= 0) { alert('Vui lòng nhập giá bán hợp lệ.'); return; }
+
+      const specsRaw = document.getElementById('p-specs').value.trim();
+      let specs = {};
+      if (specsRaw) {
+        try { specs = JSON.parse(specsRaw); }
+        catch { alert('Thông số kỹ thuật không đúng định dạng JSON. Vui lòng kiểm tra lại.'); return; }
+      }
+
+      const iconVal = document.getElementById('p-icon').value.trim();
+
+      const productData = {
+        name,
+        category,
+        brand: document.getElementById('p-brand').value.trim(),
+        price,
+        originalPrice: parseFloat(document.getElementById('p-original-price').value) || 0,
+        stock: parseInt(document.getElementById('p-stock').value) || 0,
+        images: [iconVal || '📦'],
+        description: document.getElementById('p-desc').value.trim(),
+        specs,
+        active: document.getElementById('p-active').checked,
+        featured: false,
+      };
+
+      if (id) {
+        Store.updateProduct(id, productData);
+        UI.toast('Đã cập nhật sản phẩm thành công!', 'success');
+      } else {
+        Store.addProduct({
+          ...productData,
+          id: UI.genId('prod'),
+          createdAt: new Date().toISOString(),
+        });
+        UI.toast('Đã thêm sản phẩm mới thành công!', 'success');
+      }
+
+      closeModal();
+      loadProducts();
+    }
+
+    // ---- Delete Product ----
+    function deleteProduct(id) {
+      const p = Store.getProduct(id);
+      if (!p) return;
+      if (!confirm(`Bạn có chắc muốn xóa sản phẩm:\n"${p.name}"?\n\nHành động này không thể hoàn tác!`)) return;
+      Store.deleteProduct(id);
+      UI.toast(`Đã xóa "${p.name}"`, 'info');
+      loadProducts();
+    }
+
+    // ---- Keyboard ----
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // ---- Init ----
+    document.addEventListener('DOMContentLoaded', () => {
+      loadProducts();
+      initAdminNav();
+      // Check for ?action=add in URL
+      if (new URLSearchParams(location.search).get('action') === 'add') {
+        setTimeout(openAddModal, 300);
+      }
+    });
+  </script>
+</body>
+</html>
