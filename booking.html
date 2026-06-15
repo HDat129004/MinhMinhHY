@@ -375,7 +375,43 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const dateInput = document.getElementById('b-date');
-      dateInput.min = new Date().toISOString().split('T')[0];
+      if (dateInput) {
+        dateInput.min = new Date().toISOString().split('T')[0];
+      }
+
+      // Parse query parameters for project reference
+      const urlParams = new URLSearchParams(window.location.search);
+      const ref = urlParams.get('ref');
+      if (ref) {
+        const projectNames = {
+          'proj_001': 'Hệ thống Camera giám sát KCN Thăng Long II',
+          'proj_002': 'Phủ sóng Wi-Fi Mesh Khách sạn Ruby Hưng Yên',
+          'proj_003': 'Hạ tầng mạng & Lưu trữ NAS Công ty May Hưng Long',
+          'proj_004': 'Thiết bị Máy Văn phòng & Hội thảo Trường THCS Yên Mỹ'
+        };
+        const projectTypes = {
+          'proj_001': 'network',
+          'proj_002': 'wifi',
+          'proj_003': 'network',
+          'proj_004': 'purchase'
+        };
+
+        const name = projectNames[ref];
+        const type = projectTypes[ref];
+
+        if (name) {
+          const descInput = document.getElementById('b-desc');
+          if (descInput) {
+            descInput.value = `Tôi cần tư vấn thiết kế/thi công giải pháp tương tự dự án: "${name}".`;
+          }
+        }
+        if (type) {
+          const typeInput = document.getElementById('b-type');
+          if (typeInput) {
+            typeInput.value = type;
+          }
+        }
+      }
     });
 
     function selectTime(time, el) {

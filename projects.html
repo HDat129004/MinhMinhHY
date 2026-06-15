@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dự Án Tiêu Biểu – Minh Minh Hưng Yên</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="manifest" href="manifest.json">
+  <style>
+    .projects-page { padding-top: var(--nav-height); min-height: 100vh; background-color: var(--bg-surface); }
+    .projects-header {
+      padding: 60px 0 40px;
+      background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-base) 100%);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .projects-title {
+      font-family: var(--font-ui);
+      font-size: clamp(28px, 5vw, 42px);
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+    .projects-subtitle {
+      font-size: 16px;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    .filter-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 30px 0 10px;
+      flex-wrap: wrap;
+    }
+    .filter-tab {
+      padding: 10px 24px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--ease);
+      user-select: none;
+    }
+    .filter-tab:hover, .filter-tab.active {
+      background: var(--green);
+      border-color: var(--green);
+      color: white;
+      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+    }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      padding: 20px 0 80px;
+    }
+    .project-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 30px;
+      padding: 30px;
+      box-shadow: var(--shadow-sm);
+      transition: var(--ease);
+    }
+    .project-card:hover {
+      border-color: var(--orange-light);
+      box-shadow: var(--shadow-md);
+    }
+    .project-img-container {
+      height: 100%;
+      min-height: 280px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      position: relative;
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 80px;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.02);
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+    .project-meta {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .meta-tag {
+      padding: 4px 12px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-hover);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .meta-tag.category {
+      background: var(--green-glow);
+      color: var(--green);
+    }
+    .project-name {
+      font-family: var(--font-ui);
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+    .project-desc {
+      color: var(--text-secondary);
+      font-size: 14.5px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .project-section-title {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .highlight-list {
+      margin-left: 20px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .highlight-list li {
+      margin-bottom: 6px;
+    }
+    .device-list {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .device-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--bg-hover);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+      transition: var(--ease);
+    }
+    .device-tag:hover {
+      border-color: var(--orange);
+      background: var(--orange-glow);
+      color: var(--orange);
+    }
+    .project-actions {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: var(--radius-md);
+      font-size: 13.5px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: var(--ease);
+      border: none;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .btn-action.primary {
+      background: var(--orange);
+      color: white;
+      box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25);
+    }
+    .btn-action.primary:hover {
+      background: var(--orange-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(234, 88, 12, 0.35);
+    }
+    .btn-action.secondary {
+      background: var(--bg-hover);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+    .btn-action.secondary:hover {
+      background: var(--bg-base);
+      border-color: var(--text-primary);
+      transform: translateY(-2px);
+    }
+    
+    /* Collapsible Feedback section */
+    .feedback-box {
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+      margin-top: 20px;
+    }
+    .feedback-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      padding: 8px 0;
+    }
+    .feedback-header h4 {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+    }
+    .feedback-toggle-icon {
+      font-size: 18px;
+      color: var(--text-muted);
+      transition: transform var(--ease);
+    }
+    .feedback-content {
+      display: none;
+      margin-top: 16px;
+    }
+    .feedback-content.open {
+      display: block;
+    }
+    .feedback-header.open-header .feedback-toggle-icon {
+      transform: rotate(180deg);
+    }
+    .feedback-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .feedback-item {
+      background: var(--bg-surface);
+      padding: 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+    .feedback-user-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .feedback-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--green);
+      color: white;
+      font-weight: 800;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .user-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .feedback-rating {
+      color: #f59e0b;
+      font-size: 12px;
+    }
+    .feedback-comment {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .feedback-date {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    
+    /* Write feedback form */
+    .write-feedback-form {
+      background: var(--bg-hover);
+      padding: 16px;
+      border-radius: var(--radius-md);
+      border: 1px dashed var(--border);
+      margin-top: 16px;
+    }
+    .form-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .stars-select {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .star-option {
+      font-size: 22px;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: var(--ease);
+      user-select: none;
+    }
+    .star-option.selected, .star-option:hover {
+      color: #f59e0b;
+    }
+    
+    @media (max-width: 992px) {
+      .project-card {
+        grid-template-columns: 1fr;
+      }
+      .project-img-container {
+        min-height: 200px;
+        height: 220px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="navbar-placeholder"></div>
+
+  <div class="projects-page">
+    <header class="projects-header">
+      <div class="container">
+        <h1 class="projects-title">Dự Án Tiêu Biểu</h1>
+        <p class="projects-subtitle">Minh Minh Hưng Yên tự hào đồng hành cùng các doanh nghiệp, cơ quan và hộ gia đình trong việc triển khai hạ tầng công nghệ tin cậy.</p>
+      </div>
+    </header>
+
+    <main class="container" style="max-width:1100px;">
+      <!-- FILTER TABS -->
+      <div class="filter-tabs" id="filter-tabs">
+        <div class="filter-tab active" data-cat="all" onclick="filterCat('all', this)">Tất cả dự án</div>
+        <div class="filter-tab" data-cat="Camera" onclick="filterCat('Camera', this)">Camera Giám sát</div>
+        <div class="filter-tab" data-cat="Mạng & Viễn thông" onclick="filterCat('Mạng & Viễn thông', this)">Hạ tầng Mạng</div>
+        <div class="filter-tab" data-cat="IT & Máy chủ" onclick="filterCat('IT & Máy chủ', this)">IT & Máy chủ</div>
+        <div class="filter-tab" data-cat="Máy in & Thiết bị" onclick="filterCat('Máy in & Thiết bị', this)">Máy Văn phòng</div>
+      </div>
+
+      <!-- PROJECTS GRID -->
+      <div class="projects-grid" id="projects-grid">
+        <!-- Rendered by JS -->
+      </div>
+    </main>
+  </div>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="js/app.js"></script>
+  <script>
+    // --- Data Definition ---
+    const PROJECTS = [
+      {
+        id: 'proj_001',
+        name: 'Hệ thống Camera giám sát KCN Thăng Long II',
+        category: 'Camera',
+        icon: '📷',
+        location: 'KCN Thăng Long II, Yên Mỹ, Hưng Yên',
+        year: '2026',
+        desc: 'Thi công lắp đặt trọn gói hệ thống camera an ninh độ phân giải cao ngoài trời và trong xưởng sản xuất thiết bị điện tử rộng 2500m2. Hệ thống hoạt động 24/7, có khả năng nhìn rõ ban đêm và lưu trữ tập trung bảo mật cao.',
+        highlights: [
+          'Thi công đi dây cứng 32 Camera IP hồng ngoại xa 40m.',
+          'Cấu hình đầu ghi hình chuyên dụng, lưu trữ dữ liệu an toàn 30 ngày.',
+          'Đi dây âm trần và trong ống cứng bảo vệ chống chuột cắn, chống cháy.'
+        ],
+        devices: [
+          { name: 'Camera Dome Hikvision 2MP', qty: 12, link: 'prod_cam_001' },
+          { name: 'Camera Thân Dahua 4MP ngoài trời', qty: 20, link: 'prod_cam_002' },
+          { name: 'Đầu ghi hình Dahua 16 kênh chuẩn 4K', qty: 2, link: 'prod_cam_004' }
+        ]
+      },
+      {
+        id: 'proj_002',
+        name: 'Phủ sóng Wi-Fi Mesh Khách sạn Ruby Hưng Yên',
+        category: 'Mạng & Viễn thông',
+        icon: '📶',
+        location: 'Đường Nguyễn Văn Linh, TP. Hưng Yên',
+        year: '2025',
+        desc: 'Nâng cấp toàn bộ hạ tầng mạng LAN và phủ sóng Wi-Fi Mesh tốc độ cao chuẩn Wi-Fi 6 cho tòa nhà khách sạn 7 tầng, 45 phòng nghỉ. Tự động chuyển vùng thông minh giúp khách di chuyển liên tục không mất kết nối.',
+        highlights: [
+          'Lắp đặt 15 bộ phát Wi-Fi 6 chịu tải lớn 150+ user đồng thời.',
+          'Thiết lập mạng Wi-Fi khách biệt lập, giới hạn băng thông chống nghẽn mạng.',
+          'Đi cáp mạng Cat6 Commscope lõi đồng 100% âm tường đảm bảo thẩm mỹ.'
+        ],
+        devices: [
+          { name: 'Router Wi-Fi 6 Ruijie Reyee RG-EW3200GX', qty: 15, link: 'prod_net_001' },
+          { name: 'Switch POE Dahua 24 Cổng Gigabit', qty: 1, link: 'prod_net_002' },
+          { name: 'Cáp mạng Cat6 Commscope', qty: 4, link: 'prod_net_003' }
+        ]
+      },
+      {
+        id: 'proj_003',
+        name: 'Hạ tầng mạng & Lưu trữ NAS Công ty May Hưng Long',
+        category: 'IT & Máy chủ',
+        icon: '💻',
+        location: 'Thị xã Mỹ Hào, Hưng Yên',
+        year: '2026',
+        desc: 'Thiết lập toàn bộ hạ tầng máy tính văn phòng, bấm cáp mạng và cấu hình hệ thống lưu trữ tập trung NAS Synology phân quyền bảo mật dữ liệu, tự động sao lưu phòng chống virus mã hóa ransomware.',
+        highlights: [
+          'Setup hệ thống máy tính Dell Optiplex văn phòng cho 30 nhân viên.',
+          'Cấu hình phân quyền truy cập dữ liệu phòng ban trên NAS Synology.',
+          'Setup máy in đa năng in qua mạng LAN cho toàn bộ nhân sự.'
+        ],
+        devices: [
+          { name: 'Thiết bị lưu trữ NAS Synology DS224+', qty: 1, link: 'prod_it_001' },
+          { name: 'PC Đồng Bộ Dell Optiplex 3000 SFF', qty: 30, link: 'prod_it_002' },
+          { name: 'Laptop Dell Latitude 3540', qty: 5, link: 'prod_it_003' },
+          { name: 'Máy in Laser Canon MF264dw', qty: 2, link: 'prod_prn_001' }
+        ]
+      },
+      {
+        id: 'proj_004',
+        name: 'Thiết bị Máy Văn phòng & Hội thảo Trường THCS Yên Mỹ',
+        category: 'Máy in & Thiết bị',
+        icon: '🖨️',
+        location: 'Thị trấn Yên Mỹ, Hưng Yên',
+        year: '2026',
+        desc: 'Cung cấp trang thiết bị máy in đa chức năng kết nối Wi-Fi in ấn giáo án, đề thi nhanh chóng cho văn phòng Ban giám hiệu và lắp đặt máy chiếu Epson độ sáng cao phục vụ giảng dạy lớp học thông minh.',
+        highlights: [
+          'Lắp đặt 8 máy chiếu Epson EB-E01 kèm màn chiếu điện điều khiển từ xa.',
+          'Cung cấp máy in laser đa chức năng Canon in 2 mặt tốc độ cao.',
+          'Lắp đặt nhanh chóng trong ngày nghỉ, hướng dẫn giáo viên vận hành tận tình.'
+        ],
+        devices: [
+          { name: 'Máy in Laser Canon MF264dw', qty: 3, link: 'prod_prn_001' },
+          { name: 'Máy chiếu Epson EB-E01 XGA', qty: 8, link: 'prod_prn_002' }
+        ]
+      }
+    ];
+
+    const DEFAULT_REVIEWS = [
+      { projectId: 'proj_001', name: 'Anh Quang (Giám đốc kỹ thuật)', rating: 5, comment: 'Đơn vị thi công cực kỳ nhiệt tình, hỗ trợ đi ống cứng an toàn, gọn gàng. Camera ban đêm hồng ngoại xem rất rõ nét.', date: '2026-05-15' },
+      { projectId: 'proj_001', name: 'Chị Hà (Quản lý Kế hoạch)', rating: 5, comment: 'Minh Minh lắp camera rất nhanh, hỗ trợ cài app xem camera trên điện thoại cho tất cả các quản lý xưởng vô cùng chu đáo.', date: '2026-06-02' },
+      { projectId: 'proj_002', name: 'Anh Nam (Chủ khách sạn Ruby)', rating: 5, comment: 'Khách lưu trú khen Wi-Fi chạy rất nhanh và mượt. Khi di chuyển giữa các tầng không còn bị mất kết nối như hệ thống cũ.', date: '2025-11-20' },
+      { projectId: 'proj_003', name: 'Anh Tiến (GĐ Công ty May)', rating: 5, comment: 'Hệ thống lưu trữ NAS dùng rất tốt, quản lý tệp dữ liệu chung siêu nhanh và bảo mật, nhân viên chia sẻ thông tin rất nhanh gọn.', date: '2026-03-12' },
+      { projectId: 'proj_004', name: 'Thầy Hùng (Hiệu phó trường THCS)', rating: 5, comment: 'Máy in in đề thi rất nét, máy chiếu sáng rõ dùng tốt trong ban ngày không cần kéo rèm tối hoàn toàn. Đánh giá 5 sao cho dịch vụ.', date: '2026-02-28' }
+    ];
+
+    let selectedCat = 'all';
+
+    // --- Seeding Reviews ---
+    function getReviews() {
+      try {
+        const raw = localStorage.getItem('mm_project_reviews');
+        if (!raw) {
+          localStorage.setItem('mm_project_reviews', JSON.stringify(DEFAULT_REVIEWS));
+          return DEFAULT_REVIEWS;
+        }
+        return JSON.parse(raw);
+      } catch {
+        return DEFAULT_REVIEWS;
+      }
+    }
+
+    function addReview(projectId, name, rating, comment) {
+      const reviews = getReviews();
+      const newReview = {
+        projectId,
+        name,
+        rating: parseInt(rating),
+        comment,
+        date: new Date().toISOString().split('T')[0]
+      };
+      reviews.unshift(newReview);
+      localStorage.setItem('mm_project_reviews', JSON.stringify(reviews));
+      return newReview;
+    }
+
+    // --- Render logic ---
+    function renderProjects() {
+      const grid = document.getElementById('projects-grid');
+      const reviews = getReviews();
+      
+      const filtered = selectedCat === 'all' 
+        ? PROJECTS 
+        : PROJECTS.filter(p => p.category === selectedCat);
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="text-center text-muted py-5">Chưa có dự án nào trong mục này.</div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(p => {
+        const pReviews = reviews.filter(r => r.projectId === p.id);
+        const avgStars = pReviews.length > 0
+          ? (pReviews.reduce((sum, r) => sum + r.rating, 0) / pReviews.length).toFixed(1)
+          : '5.0';
+        
+        return `
+          <div class="project-card animate-fadeInUp">
+            <div class="project-img-container">
+              ${p.icon}
+            </div>
+            
+            <div style="display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <div class="project-meta">
+                  <span class="meta-tag category">${p.category}</span>
+                  <span class="meta-tag">${p.location.split(',')[1] || p.location}</span>
+                  <span class="meta-tag">Năm ${p.year}</span>
+                </div>
+                
+                <h3 class="project-name">${p.name}</h3>
+                <p class="project-desc">${p.desc}</p>
+                
+                <div class="project-section-title">🛠️ Công việc triển khai:</div>
+                <ul class="highlight-list">
+                  ${p.highlights.map(h => `<li>${h}</li>`).join('')}
+                </ul>
+                
+                <div class="project-section-title">📦 Thiết bị đã lắp đặt:</div>
+                <div class="device-list">
+                  ${p.devices.map(d => `
+                    <a href="product.html?id=${d.link}" class="device-tag" title="Xem chi tiết sản phẩm">
+                      <span>🔧</span>
+                      <span>${d.name} (x${d.qty})</span>
+                    </a>
+                  `).join('')}
+                </div>
+              </div>
+              
+              <div>
+                <div class="project-actions">
+                  <button class="btn-action primary" onclick="zaloConsult('${p.name}')">
+                    💬 Tư vấn qua Zalo
+                  </button>
+                  <a href="booking.html?ref=${p.id}" class="btn-action secondary">
+                    📅 Đặt lịch khảo sát
+                  </a>
+                </div>
+                
+                <!-- FEEDBACK COLLAPSIBLE BOX -->
+                <div class="feedback-box">
+                  <div class="feedback-header" onclick="toggleFeedback('${p.id}', this)">
+                    <h4>⭐ Phản hồi khách hàng (${pReviews.length}) — Trung bình: ${avgStars}★</h4>
+                    <span class="feedback-toggle-icon">▼</span>
+                  </div>
+                  
+                  <div class="feedback-content" id="fb-content-${p.id}">
+                    <div class="feedback-list">
+                      ${pReviews.map(r => `
+                        <div class="feedback-item">
+                          <div class="feedback-user-info">
+                            <div class="feedback-user">
+                              <div class="user-avatar">${r.name.charAt(0).toUpperCase()}</div>
+                              <span class="user-name">${r.name}</span>
+                            </div>
+                            <span class="feedback-rating">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span>
+                          </div>
+                          <p class="feedback-comment">${r.comment}</p>
+                          <div style="text-align:right; margin-top:6px;">
+                            <span class="feedback-date">${r.date}</span>
+                          </div>
+                        </div>
+                      `).join('')}
+                    </div>
+                    
+                    <!-- Write feedback form -->
+                    <div class="write-feedback-form">
+                      <div class="form-title">✍️ Gửi đánh giá cho dự án này</div>
+                      <form onsubmit="event.preventDefault(); submitFeedbackForm('${p.id}', this);">
+                        <div class="form-group" style="margin-bottom:12px;">
+                          <label class="form-label" style="font-size:12px;margin-bottom:4px;">Số sao đánh giá:</label>
+                          <div class="stars-select" id="stars-sel-${p.id}">
+                            <span class="star-option selected" onclick="setStars('${p.id}', 1, this)">★</span>
+                            <span class="star-option selected" onclick="setStars('${p.id}', 2, this)">★</span>
+                            <span class="star-option selected" onclick="setStars('${p.id}', 3, this)">★</span>
+                            <span class="star-option selected" onclick="setStars('${p.id}', 4, this)">★</span>
+                            <span class="star-option selected" onclick="setStars('${p.id}', 5, this)">★</span>
+                            <input type="hidden" name="rating" id="rating-val-${p.id}" value="5">
+                          </div>
+                        </div>
+                        <div class="form-grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+                          <div class="form-group" style="margin-bottom:0;">
+                            <input type="text" class="form-control" name="name" style="padding:10px;font-size:13px;" placeholder="Tên của bạn *" required>
+                          </div>
+                          <div class="form-group" style="margin-bottom:0;">
+                            <input type="text" class="form-control" name="comment" style="padding:10px;font-size:13px;" placeholder="Nhận xét của bạn về dự án này *" required>
+                          </div>
+                        </div>
+                        <div style="text-align:right;">
+                          <button type="submit" class="btn-action primary" style="padding:8px 18px;font-size:12px;border-radius:6px;">Gửi phản hồi</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // --- Interactive Functions ---
+    function filterCat(cat, el) {
+      selectedCat = cat;
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      renderProjects();
+    }
+
+    function toggleFeedback(projectId, el) {
+      const content = document.getElementById(`fb-content-${projectId}`);
+      content.classList.toggle('open');
+      el.classList.toggle('open-header');
+    }
+
+    function setStars(projectId, stars, el) {
+      const parent = document.getElementById(`stars-sel-${projectId}`);
+      const starsArr = parent.querySelectorAll('.star-option');
+      document.getElementById(`rating-val-${projectId}`).value = stars;
+      
+      starsArr.forEach((s, idx) => {
+        if (idx < stars) {
+          s.classList.add('selected');
+        } else {
+          s.classList.remove('selected');
+        }
+      });
+    }
+
+    function submitFeedbackForm(projectId, form) {
+      const name = form.elements['name'].value.trim();
+      const comment = form.elements['comment'].value.trim();
+      const rating = form.elements['rating'].value;
+
+      if (!name || !comment) {
+        UI.toast('Vui lòng điền đầy đủ các thông tin bắt buộc!', 'warning');
+        return;
+      }
+
+      addReview(projectId, name, rating, comment);
+      UI.toast('Cảm ơn bạn đã gửi phản hồi đánh giá dự án!', 'success');
+      
+      // Reset form
+      form.reset();
+      setStars(projectId, 5, null);
+      
+      // Re-render
+      renderProjects();
+      
+      // Re-open feedback collapsible
+      const content = document.getElementById(`fb-content-${projectId}`);
+      if (content) content.classList.add('open');
+      
+      const header = content.previousElementSibling;
+      if (header) header.classList.add('open-header');
+    }
+
+    // --- Zalo Consult ---
+    function zaloConsult(projectName) {
+      const msg = `Xin chào Minh Minh Hưng Yên, tôi cần tư vấn thi công/lắp đặt dự án tương tự: "${projectName}". Vui lòng liên hệ hỗ trợ.`;
+      navigator.clipboard.writeText(msg).then(() => {
+        alert("Đã tự động sao chép yêu cầu tư vấn! Trình duyệt sẽ mở Zalo Chat, bạn chỉ cần Dán (Paste / Ctrl+V) tin nhắn vào ô chat của Minh Minh và gửi đi.");
+        window.open("https://zalo.me/0939191060", "_blank");
+      }).catch(() => {
+        window.open("https://zalo.me/0939191060", "_blank");
+      });
+    }
+  </script>
+</body>
+</html>

@@ -629,6 +629,7 @@ function renderNavbar() {
         <div class="nav-links">
           <a href="${prefix}index.html"    class="nav-link">Trang chủ</a>
           <a href="${prefix}products.html" class="nav-link">Sản phẩm</a>
+          <a href="${prefix}projects.html" class="nav-link">Dự án</a>
           <a href="${prefix}booking.html"  class="nav-link">Đặt lịch</a>
           <a href="${prefix}contact.html"  class="nav-link">Liên hệ</a>
         </div>
@@ -683,9 +684,9 @@ function renderFooter() {
             <div class="footer-title">Dịch vụ</div>
             <div class="footer-links">
               <a href="${prefix}booking.html" class="footer-link">Đặt lịch tư vấn</a>
+              <a href="${prefix}projects.html" class="footer-link">Dự án tiêu biểu</a>
               <a href="${prefix}survey.html" class="footer-link">Khảo sát ý kiến</a>
               <a href="#" class="footer-link">Bảo trì hệ thống IT</a>
-              <a href="#" class="footer-link">Hạ tầng An ninh</a>
             </div>
           </div>
           <div>
