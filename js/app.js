@@ -667,7 +667,12 @@ function renderFooter() {
             </div>
             <p class="footer-desc">Đồng hành cùng doanh nghiệp tối ưu chi phí vận hành, nâng cấp hiệu suất làm việc với hệ thống thiết bị và giải pháp công nghệ chuẩn mực.</p>
             <div class="footer-social">
-              <a href="#" class="social-btn" title="Facebook">f</a>
+              <a href="https://www.facebook.com/profile.php?id=61579653812223" target="_blank" class="social-btn" title="Facebook">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/></svg>
+              </a>
+              <a href="https://www.tiktok.com/@minhminhpchungyen_89" target="_blank" class="social-btn" title="TikTok">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M9 0h1.98c.144.32.34.61.58.85.5.5 1.15.75 1.87.8V3.62c-.63-.05-1.22-.3-1.72-.72V10.5a4.5 4.5 0 1 1-9-0 4.5 4.5 0 0 1 7.16-3.66V0zm-1.8 10.5a2.5 2.5 0 1 0 5 0v-7h-1v1a3.5 3.5 0 0 1-4 4v2z"/></svg>
+              </a>
               <a href="https://zalo.me/0368386357" target="_blank" class="social-btn" title="Zalo" style="padding:0;">
                 <img src="${prefix}assets/images/zalo-icon.png" alt="Zalo" style="width:20px;height:20px;object-fit:contain;border-radius:4px;">
               </a>
