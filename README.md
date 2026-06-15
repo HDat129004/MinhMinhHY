@@ -46,7 +46,7 @@ Minh Minh Web/
 
 ### 2. Xác nhận đơn hàng & lịch hẹn qua Zalo
 Do hệ thống chạy hoàn toàn ở phía Client (không cần server backend phức tạp), chúng tôi đã phát triển tính năng chuyển đổi đơn hàng sang tin nhắn **Zalo** cực kì thuận tiện cho người dùng Việt Nam:
-- **Đặt hàng:** Sau khi điền form thanh toán COD thành công, hệ thống hiển thị popup kèm nút **"Xác nhận đơn qua Zalo"**. Khi nhấn nút này, trình duyệt sẽ tự động sao chép toàn bộ thông tin đơn hàng (Mã đơn, Tên khách hàng, SĐT, Địa chỉ, sản phẩm đã mua, tổng tiền) vào clipboard của khách hàng và mở Zalo Chat kết nối thẳng tới số Hotline **0939191060** của bạn. Khách hàng chỉ cần nhấn **Dán (Ctrl + V)** và gửi là xong.
+- **Đặt hàng:** Sau khi điền form thanh toán COD thành công, hệ thống hiển thị popup kèm nút **"Xác nhận đơn qua Zalo"**. Khi nhấn nút này, trình duyệt sẽ tự động sao chép toàn bộ thông tin đơn hàng (Mã đơn, Tên khách hàng, SĐT, Địa chỉ, sản phẩm đã mua, tổng tiền) vào clipboard của khách hàng và mở Zalo Chat kết nối thẳng tới số Hotline **0368386357** của bạn. Khách hàng chỉ cần nhấn **Dán (Ctrl + V)** và gửi là xong.
 - **Đặt lịch tư vấn:** Tương tự, thông tin đặt lịch hẹn (Họ tên, SĐT, Dịch vụ muốn tư vấn, Ngày hẹn, Giờ hẹn) sẽ được tự động sao chép để khách hàng dán trực tiếp gửi qua Zalo cho cửa hàng.
 
 ### 3. Bộ lọc thương hiệu động (Brand Filter)

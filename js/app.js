@@ -77,7 +77,7 @@ const Store = {
   setCart(c) { return this.set(this.KEYS.CART, c); },
 
   // Settings
-  getSettings()  { return this.get(this.KEYS.SETTINGS) || { storeName: 'Minh Minh Hưng Yên', phone: '0939191060', address: 'Đường Huyện Đội, Yên Mỹ, Hưng Yên' }; },
+  getSettings()  { return this.get(this.KEYS.SETTINGS) || { storeName: 'Minh Minh Hưng Yên', phone: '0368 386 357', address: 'Đường Huyện Đội, Yên Mỹ, Hưng Yên' }; },
 };
 
 // =============================================
@@ -668,7 +668,7 @@ function renderFooter() {
             <p class="footer-desc">Đồng hành cùng doanh nghiệp tối ưu chi phí vận hành, nâng cấp hiệu suất làm việc với hệ thống thiết bị và giải pháp công nghệ chuẩn mực.</p>
             <div class="footer-social">
               <a href="#" class="social-btn" title="Facebook">f</a>
-              <a href="https://zalo.me/0939191060" target="_blank" class="social-btn" title="Zalo" style="padding:0;">
+              <a href="https://zalo.me/0368386357" target="_blank" class="social-btn" title="Zalo" style="padding:0;">
                 <img src="${prefix}assets/images/zalo-icon.png" alt="Zalo" style="width:20px;height:20px;object-fit:contain;border-radius:4px;">
               </a>
             </div>
@@ -694,7 +694,7 @@ function renderFooter() {
           <div>
             <div class="footer-title">Liên hệ</div>
             <div class="footer-links">
-              <span class="footer-link">📞 0939191060</span>
+              <span class="footer-link">📞 0368 386 357</span>
               <span class="footer-link">✉️ minhminhhungyenco.ltd@gmail.com</span>
               <span class="footer-link">📍 Đường Huyện Đội, Yên Mỹ, Hưng Yên</span>
               <span class="footer-link">🕐 MST: 0901197922</span>
@@ -708,7 +708,7 @@ function renderFooter() {
       </div>
     </footer>
     <button class="scroll-top-btn" aria-label="Lên đầu trang">↑</button>
-    <a href="https://zalo.me/0939191060" target="_blank" class="zalo-pulse">
+    <a href="https://zalo.me/0368386357" target="_blank" class="zalo-pulse">
       <img src="${prefix}assets/images/zalo-icon.png" alt="Zalo">
       <span>Chat Zalo Tư Vấn</span>
     </a>
