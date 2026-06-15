@@ -668,7 +668,9 @@ function renderFooter() {
             <p class="footer-desc">Đồng hành cùng doanh nghiệp tối ưu chi phí vận hành, nâng cấp hiệu suất làm việc với hệ thống thiết bị và giải pháp công nghệ chuẩn mực.</p>
             <div class="footer-social">
               <a href="#" class="social-btn" title="Facebook">f</a>
-              <a href="https://zalo.me/0939191060" target="_blank" class="social-btn" title="Zalo">Z</a>
+              <a href="https://zalo.me/0939191060" target="_blank" class="social-btn" title="Zalo" style="padding:0;">
+                <img src="${prefix}assets/images/zalo-icon.png" alt="Zalo" style="width:20px;height:20px;object-fit:contain;border-radius:4px;">
+              </a>
             </div>
           </div>
           <div>
@@ -706,6 +708,10 @@ function renderFooter() {
       </div>
     </footer>
     <button class="scroll-top-btn" aria-label="Lên đầu trang">↑</button>
+    <a href="https://zalo.me/0939191060" target="_blank" class="zalo-pulse">
+      <img src="${prefix}assets/images/zalo-icon.png" alt="Zalo">
+      <span>Chat Zalo Tư Vấn</span>
+    </a>
     <div id="toast-container" class="toast-container"></div>
   `;
 }

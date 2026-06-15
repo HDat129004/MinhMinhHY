@@ -14,7 +14,8 @@ const ASSETS = [
   'js/admin.js',
   'assets/images/logo-192.png',
   'assets/images/logo-512.png',
-  'assets/images/hero-banner.png'
+  'assets/images/hero-banner.png',
+  'assets/images/zalo-icon.png'
 ];
 
 self.addEventListener('install', (e) => {
