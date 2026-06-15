@@ -77,7 +77,7 @@ const Store = {
   setCart(c) { return this.set(this.KEYS.CART, c); },
 
   // Settings
-  getSettings()  { return this.get(this.KEYS.SETTINGS) || { storeName: 'Minh Minh Hưng Yên', phone: '0368 386 357', address: 'Đường Huyện Đội, Yên Mỹ, Hưng Yên' }; },
+  getSettings()  { return this.get(this.KEYS.SETTINGS) || { storeName: 'Minh Minh Hưng Yên', phone: '0939191060', address: 'Đường Huyện Đội, Yên Mỹ, Hưng Yên' }; },
 };
 
 // =============================================
@@ -556,7 +556,7 @@ function renderFooter() {
             <p class="footer-desc">Đồng hành cùng doanh nghiệp tối ưu chi phí vận hành, nâng cấp hiệu suất làm việc với hệ thống thiết bị và giải pháp công nghệ chuẩn mực.</p>
             <div class="footer-social">
               <a href="#" class="social-btn" title="Facebook">f</a>
-              <a href="https://zalo.me/0368386357" target="_blank" class="social-btn" title="Zalo">Z</a>
+              <a href="https://zalo.me/0939191060" target="_blank" class="social-btn" title="Zalo">Z</a>
             </div>
           </div>
           <div>
@@ -580,7 +580,7 @@ function renderFooter() {
           <div>
             <div class="footer-title">Liên hệ</div>
             <div class="footer-links">
-              <span class="footer-link">📞 0368 386 357</span>
+              <span class="footer-link">📞 0939191060</span>
               <span class="footer-link">✉️ minhminhhungyenco.ltd@gmail.com</span>
               <span class="footer-link">📍 Đường Huyện Đội, Yên Mỹ, Hưng Yên</span>
               <span class="footer-link">🕐 MST: 0901197922</span>
