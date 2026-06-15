@@ -352,6 +352,109 @@ const Cart = {
 };
 
 // =============================================
+//   PRODUCT COMPARISON MANAGEMENT
+// =============================================
+const Compare = {
+  getKeys() {
+    try {
+      const raw = localStorage.getItem('mm_compare');
+      return raw ? JSON.parse(raw) : [];
+    } catch { return []; }
+  },
+
+  setKeys(keys) {
+    localStorage.setItem('mm_compare', JSON.stringify(keys));
+    this.updateStickyBar();
+  },
+
+  isAdded(id) {
+    return this.getKeys().includes(id);
+  },
+
+  toggle(id) {
+    let keys = this.getKeys();
+    const idx = keys.indexOf(id);
+    if (idx >= 0) {
+      keys.splice(idx, 1);
+    } else {
+      if (keys.length >= 3) {
+        UI.toast('Chỉ có thể so sánh tối đa 3 sản phẩm!', 'warning');
+        return false;
+      }
+      keys.push(id);
+    }
+    this.setKeys(keys);
+    return true;
+  },
+
+  updateStickyBar() {
+    const keys = this.getKeys();
+    
+    // Skip rendering sticky bar on compare.html itself
+    if (window.location.pathname.includes('compare.html')) return;
+
+    const bar = document.getElementById('compare-sticky-bar') || (() => {
+      const el = document.createElement('div');
+      el.id = 'compare-sticky-bar';
+      el.style.cssText = 'position: fixed; bottom: 30px; left: 30px; right: 30px; max-width: 650px; margin: 0 auto; background: #ffffff; border: 2px solid var(--orange); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; z-index: 10000; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); transform: translateY(150%); gap: 16px; flex-wrap: wrap;';
+      document.body.appendChild(el);
+      return el;
+    })();
+
+    if (keys.length === 0) {
+      bar.style.transform = 'translateY(150%)';
+      return;
+    }
+
+    const products = keys.map(id => Store.getProduct(id)).filter(Boolean);
+
+    bar.style.transform = 'translateY(0)';
+    bar.innerHTML = `
+      <div style="display:flex; align-items:center; gap:12px; flex-grow:1;">
+        <span style="font-size:13px; font-weight:800; color:var(--text-primary); text-transform:uppercase; letter-spacing:0.5px;">So sánh (${keys.length}/3):</span>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          ${products.map(p => `
+            <div style="display:flex; align-items:center; gap:6px; background:var(--bg-hover); padding:4px 10px; border-radius:6px; font-size:12px; border:1px solid var(--border);">
+              <span>${p.images?.[0] || '📦'}</span>
+              <span style="max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:700; color:var(--text-primary);">${p.name}</span>
+              <button onclick="event.stopPropagation(); removeCompareProduct('${p.id}')" style="background:none; border:none; color:var(--error); font-weight:800; cursor:pointer; font-size:14px; padding-left:4px;">×</button>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button onclick="clearCompareProducts()" style="background:var(--bg-hover); border:1px solid var(--border); color:var(--text-secondary); font-size:12px; font-weight:700; padding:8px 14px; border-radius:8px; cursor:pointer; transition:0.2s;">Xóa tất cả</button>
+        <button onclick="goToComparisonPage()" style="background:var(--orange); color:white; font-size:12px; font-weight:800; padding:8px 18px; border-radius:8px; cursor:pointer; box-shadow:0 6px 16px rgba(234,88,12,0.25); border:none; text-transform:uppercase; transition:0.2s;">So sánh ngay</button>
+      </div>
+    `;
+
+    // Sync state to all inputs
+    document.querySelectorAll('.compare-checkbox').forEach(cb => {
+      cb.checked = keys.includes(cb.dataset.id);
+    });
+  }
+};
+
+window.toggleCompareProduct = (id, el) => {
+  const success = Compare.toggle(id);
+  if (!success) {
+    el.checked = !el.checked;
+  }
+};
+
+window.removeCompareProduct = (id) => {
+  Compare.toggle(id);
+};
+
+window.clearCompareProducts = () => {
+  Compare.setKeys([]);
+};
+
+window.goToComparisonPage = () => {
+  window.location.href = 'compare.html';
+};
+
+// =============================================
 //   UI UTILITIES
 // =============================================
 const UI = {
@@ -445,9 +548,13 @@ function renderProductCard(product) {
 
   return `
     <div class="product-card animate-fadeInUp" onclick="window.location='product.html?id=${product.id}'">
-      <div class="product-img-wrapper">
+      <div class="product-img-wrapper" style="position: relative;">
         ${imgContent}
         ${discount > 0 ? `<div class="product-badge-sale">-${discount}%</div>` : ''}
+        <div style="position: absolute; top: 12px; right: 12px; z-index: 10; background: rgba(255, 255, 255, 0.95); padding: 4px 8px; border-radius: 6px; display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.12); border: 1px solid var(--border);" onclick="event.stopPropagation();">
+          <input type="checkbox" class="compare-checkbox" data-id="${product.id}" onchange="toggleCompareProduct('${product.id}', this)" ${Compare.isAdded(product.id) ? 'checked' : ''} style="width:14px; height:14px; accent-color: var(--orange); cursor: pointer; margin: 0;">
+          <span style="color: var(--text-primary); user-select: none;">So sánh</span>
+        </div>
       </div>
       <div class="product-card-body">
         <div class="product-card-brand">${product.brand}</div>
@@ -622,4 +729,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initNavbar();
   UI.initScrollTop();
+  Compare.updateStickyBar();
+
+  // Register Service Worker for PWA
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+      .then(reg => console.log('PWA Service Worker registered:', reg.scope))
+      .catch(err => console.error('PWA Service Worker registration failed:', err));
+  }
 });

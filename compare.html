@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>So sánh sản phẩm — Minh Minh Hưng Yên</title>
+  <meta name="description" content="So sánh thông số kỹ thuật và giá bán của các thiết bị mạng, camera, máy tính tại Minh Minh Hưng Yên.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    .compare-page { padding-top: var(--nav-height); min-height: 100vh; }
+    .compare-container { padding: var(--space-xl) 0; }
+    
+    .compare-table-wrapper {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow-x: auto;
+      box-shadow: var(--shadow-sm);
+      margin-top: var(--space-lg);
+    }
+    
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px;
+    }
+    
+    .compare-table th, .compare-table td {
+      padding: var(--space-md) var(--space-lg);
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      vertical-align: top;
+    }
+    
+    .compare-table th {
+      background: var(--bg-elevated);
+      font-weight: 700;
+      color: var(--text-primary);
+      text-align: left;
+      width: 200px;
+      position: sticky;
+      left: 0;
+      z-index: 5;
+      border-right: 1px solid var(--border);
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+    }
+    
+    .compare-table td {
+      color: var(--text-secondary);
+      text-align: center;
+      width: calc((100% - 200px) / 3);
+      border-right: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .compare-table td:last-child {
+      border-right: none;
+    }
+    
+    .compare-product-img {
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 50px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-md);
+      margin-bottom: 12px;
+      position: relative;
+    }
+    
+    .compare-product-img img {
+      height: 100%;
+      object-fit: contain;
+    }
+    
+    .compare-remove-btn {
+      position: absolute;
+      top: -6px; right: -6px;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: var(--error);
+      color: white;
+      border: none;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-sm);
+      transition: var(--ease);
+    }
+    
+    .compare-remove-btn:hover {
+      transform: scale(1.1);
+      background: #c53030;
+    }
+    
+    .compare-product-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      height: 42px;
+    }
+    
+    .compare-price {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--orange);
+      margin-bottom: 12px;
+    }
+    
+    .compare-section-title {
+      background: var(--bg-hover) !important;
+      color: var(--text-primary);
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 1px;
+    }
+    
+    .empty-compare {
+      text-align: center;
+      padding: var(--space-2xl) 0;
+    }
+    
+    .empty-compare-icon {
+      font-size: 64px;
+      margin-bottom: var(--space-md);
+    }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <div class="compare-page">
+    <div class="page-header">
+      <div class="container">
+        <div class="breadcrumb">
+          <a href="index.html">Trang chủ</a>
+          <span class="breadcrumb-sep">›</span>
+          <span class="breadcrumb-current">So sánh sản phẩm</span>
+        </div>
+        <h1 class="section-title" style="text-align:left;margin-bottom:0;">So sánh sản phẩm</h1>
+      </div>
+    </div>
+
+    <div class="compare-container">
+      <div class="container">
+        <div id="compare-content">
+          <!-- Dynamically populated or empty state -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="js/app.js"></script>
+  <script>
+    function renderComparePage() {
+      const contentEl = document.getElementById('compare-content');
+      const keys = Compare.getKeys();
+
+      if (keys.length === 0) {
+        contentEl.innerHTML = `
+          <div class="empty-compare">
+            <div class="empty-compare-icon">📊</div>
+            <h2 style="font-weight: 800; margin-bottom: 8px; color: var(--text-primary);">Chưa có sản phẩm để so sánh</h2>
+            <p style="color: var(--text-secondary); margin-bottom: var(--space-lg);">Hãy thêm sản phẩm từ cửa hàng để bắt đầu so sánh thông số kỹ thuật.</p>
+            <a href="products.html" class="btn btn-primary">Quay lại cửa hàng</a>
+          </div>
+        `;
+        return;
+      }
+
+      const products = keys.map(id => Store.getProduct(id)).filter(Boolean);
+
+      // Collect all specs keys
+      const specsKeys = [...new Set(products.flatMap(p => Object.keys(p.specs || {})))];
+
+      let tableHtml = `
+        <div class="compare-table-wrapper">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th style="border-right: 1px solid var(--border);">Sản phẩm</th>
+                ${products.map(p => {
+                  const imgContent = p.imageUrl
+                    ? `<img src="${p.imageUrl}" alt="${p.name}">`
+                    : `<span>${p.images?.[0] || '📦'}</span>`;
+                  return `
+                    <td>
+                      <div class="compare-product-img">
+                        <button class="compare-remove-btn" onclick="removeCompare('${p.id}')" title="Xóa khỏi danh sách">×</button>
+                        ${imgContent}
+                      </div>
+                      <div class="compare-product-name" title="${p.name}">${p.name}</div>
+                      <div class="compare-price">${UI.formatPrice(p.price)}</div>
+                      <button class="btn btn-primary btn-sm w-full" onclick="addToCart('${p.id}')">🛒 Thêm vào giỏ</button>
+                    </td>
+                  `;
+                }).join('')}
+                ${Array(3 - products.length).fill('').map(() => `
+                  <td style="background: rgba(0,0,0,0.01); vertical-align: middle;">
+                    <div style="color: var(--text-muted); font-size: 13px; font-weight: 600; padding: 40px 0;">
+                      <a href="products.html" style="color: var(--orange); text-decoration: underline;">+ Thêm sản phẩm khác</a>
+                    </div>
+                  </td>
+                `).join('')}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th class="compare-section-title" colspan="4">Thông tin cơ bản</th>
+              </tr>
+              <tr>
+                <th>Thương hiệu</th>
+                ${products.map(p => `<td><strong style="color: var(--text-primary);">${p.brand || '—'}</strong></td>`).join('')}
+                ${Array(3 - products.length).fill('').map(() => `<td>—</td>`).join('')}
+              </tr>
+              <tr>
+                <th>Danh mục</th>
+                ${products.map(p => `<td>${p.category || '—'}</td>`).join('')}
+                ${Array(3 - products.length).fill('').map(() => `<td>—</td>`).join('')}
+              </tr>
+              
+              <tr>
+                <th class="compare-section-title" colspan="4">Thông số kỹ thuật</th>
+              </tr>
+              ${specsKeys.map(specKey => `
+                <tr>
+                  <th>${specKey}</th>
+                  ${products.map(p => `<td>${p.specs?.[specKey] || '—'}</td>`).join('')}
+                  ${Array(3 - products.length).fill('').map(() => `<td>—</td>`).join('')}
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      contentEl.innerHTML = tableHtml;
+    }
+
+    function removeCompare(id) {
+      Compare.toggle(id);
+      renderComparePage();
+    }
+
+    function addToCart(id) {
+      const p = Store.getProduct(id);
+      if (!p) return;
+      Cart.addItem(p);
+      UI.toast(`Đã thêm "${p.name}" vào giỏ hàng!`, 'success');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderComparePage();
+    });
+  </script>
+</body>
+</html>

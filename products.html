@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/main.css">
+  <link rel="manifest" href="manifest.json">
   <style>
     .products-page { padding-top: var(--nav-height); min-height: 100vh; }
     .products-layout {
@@ -221,6 +222,14 @@
               </div>
             </div>
 
+            <!-- Brands -->
+            <div class="filter-section">
+              <div class="filter-section-title">Thương hiệu</div>
+              <div id="brand-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 160px; overflow-y: auto; padding-right: 4px; margin-top: 8px;">
+                <!-- Loaded dynamically -->
+              </div>
+            </div>
+
             <!-- Reset -->
             <button class="btn btn-ghost w-full btn-sm" onclick="resetFilters()">↺ Xóa bộ lọc</button>
           </aside>
@@ -274,6 +283,7 @@
     let selectedCat = 'all';
     let selectedPriceMin = 0;
     let selectedPriceMax = 0;
+    let selectedBrands = [];
 
     function init() {
       // Read URL param
@@ -282,6 +292,7 @@
       if (catParam) selectedCat = catParam;
 
       renderCategoryList();
+      renderBrandList();
       setTimeout(() => {
         document.getElementById('skeleton-grid').style.display = 'none';
         document.getElementById('products-grid').style.display = 'grid';
@@ -302,6 +313,31 @@
           }</span>
         </div>
       `).join('');
+    }
+
+    function renderBrandList() {
+      const brandListEl = document.getElementById('brand-list');
+      if (!brandListEl) return;
+
+      const products = Store.getProducts().filter(p => p.active);
+      const brands = [...new Set(products.map(p => p.brand).filter(Boolean))];
+
+      brandListEl.innerHTML = brands.map(brand => `
+        <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-secondary); cursor:pointer; user-select:none; margin-bottom:4px;">
+          <input type="checkbox" value="${brand}" onchange="toggleBrand('${brand}')" ${selectedBrands.includes(brand) ? 'checked' : ''} style="width:16px; height:16px; accent-color:var(--orange);">
+          <span>${brand}</span>
+        </label>
+      `).join('');
+    }
+
+    function toggleBrand(brand) {
+      const idx = selectedBrands.indexOf(brand);
+      if (idx >= 0) {
+        selectedBrands.splice(idx, 1);
+      } else {
+        selectedBrands.push(brand);
+      }
+      applyFilters();
     }
 
     function selectCategory(el, catId) {
@@ -332,6 +368,11 @@
       // Price filter
       if (selectedPriceMax > 0) {
         products = products.filter(p => p.price >= selectedPriceMin && p.price <= selectedPriceMax);
+      }
+
+      // Brand filter
+      if (selectedBrands.length > 0) {
+        products = products.filter(p => selectedBrands.includes(p.brand));
       }
 
       // Search filter
@@ -376,12 +417,14 @@
       selectedCat = 'all';
       selectedPriceMin = 0;
       selectedPriceMax = 0;
+      selectedBrands = [];
       document.getElementById('search-input').value = '';
       document.getElementById('sort-select').value = 'newest';
       document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
       document.querySelector('.cat-chip[data-id="all"]')?.classList.add('active');
       document.querySelectorAll('.price-chip').forEach(c => c.classList.remove('active'));
       document.querySelector('.price-chip[data-min="0"][data-max="0"]')?.classList.add('active');
+      renderBrandList();
       applyFilters();
     }
 

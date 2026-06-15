@@ -1,0 +1,24 @@
+{
+  "name": "Minh Minh Hưng Yên - Tổng thầu IT & An ninh",
+  "short_name": "MinhMinhHY",
+  "description": "Cửa hàng Thiết bị mạng, Máy tính, Văn phòng phẩm & Camera tại Yên Mỹ, Hưng Yên",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ea580c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/images/logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
