@@ -274,7 +274,11 @@ const SAMPLE_PRODUCTS = [
 ];
 
 function seedData() {
-  if (Store.getProducts().length === 0) {
+  const currentProducts = Store.getProducts();
+  const validCategories = ['Camera', 'Mạng & Viễn thông', 'IT & Máy chủ', 'Máy in & Thiết bị', 'Văn phòng phẩm'];
+  const hasOldCategories = currentProducts.some(p => !p.category || !validCategories.includes(p.category));
+
+  if (currentProducts.length === 0 || hasOldCategories) {
     Store.setProducts(SAMPLE_PRODUCTS);
   }
 }
