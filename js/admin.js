@@ -272,8 +272,7 @@ function getDashboardStats() {
 // =============================================
 function getProductModalHTML() {
   const categories = [
-    'Router WiFi', 'Switch mạng', 'Access Point', 'Modem Router',
-    'Laptop', 'Máy tính để bàn', 'RAM & Ổ cứng', 'Phụ kiện',
+    'Camera', 'Mạng & Viễn thông', 'IT & Máy chủ', 'Máy in & Thiết bị', 'Văn phòng phẩm',
   ];
 
   return `
