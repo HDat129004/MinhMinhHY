@@ -210,7 +210,7 @@
             </div>
 
             <!-- Price range -->
-            <div class="filter-section">
+            <div class="filter-section" style="display: none;">
               <div class="filter-section-title">Khoảng giá</div>
               <div id="price-list">
                 <span class="price-chip active" data-min="0" data-max="0" onclick="selectPrice(this)">Tất cả</span>
@@ -240,8 +240,6 @@
               <div class="products-count">Hiển thị <strong id="result-count">0</strong> sản phẩm</div>
               <select class="sort-select" id="sort-select" onchange="applyFilters()">
                 <option value="newest">Mới nhất</option>
-                <option value="price-asc">Giá tăng dần</option>
-                <option value="price-desc">Giá giảm dần</option>
                 <option value="name-az">Tên A–Z</option>
               </select>
             </div>

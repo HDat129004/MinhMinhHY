@@ -367,7 +367,7 @@
       document.getElementById('p-desc').textContent = p.description || '';
       document.getElementById('full-desc').textContent = p.description || '';
 
-      if (p.originalPrice && p.originalPrice > p.price) {
+      if (window.location.pathname.includes('/admin/') && p.originalPrice && p.originalPrice > p.price) {
         document.getElementById('p-orig-price').textContent = UI.formatPrice(p.originalPrice);
         document.getElementById('p-orig-price').style.display = '';
         document.getElementById('p-discount').textContent = '-' + disc + '%';

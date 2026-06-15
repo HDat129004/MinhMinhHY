@@ -233,15 +233,15 @@
       <!-- SUCCESS -->
       <div id="success-state" class="success-overlay" style="display:none; text-align:center; max-width:550px; margin:40px auto; padding:30px; border:2px solid var(--orange); border-radius:16px; background:var(--bg-surface); box-shadow:var(--shadow-md);">
         <div class="success-icon" style="font-size:50px; margin-bottom:15px;">🎉</div>
-        <div class="success-title" style="font-size:24px; font-weight:800; color:var(--green); margin-bottom:12px;">Đặt hàng thành công!</div>
+        <div class="success-title" style="font-size:24px; font-weight:800; color:var(--green); margin-bottom:12px;">Gửi yêu cầu thành công!</div>
         <div style="font-size:16px; color:var(--text-secondary); margin-bottom:16px;">
-          Mã đơn hàng: <strong style="color:var(--orange); font-size:22px;" id="success-order-id">—</strong>
+          Mã yêu cầu: <strong style="color:var(--orange); font-size:22px;" id="success-order-id">—</strong>
         </div>
-        <p style="color:var(--text-secondary); margin-bottom:24px; font-size:14px; line-height:1.6;">Đơn hàng đã được lưu trên hệ thống. Hãy nhấn nút dưới đây để <strong>sao chép nội dung đơn hàng</strong> và mở Zalo gửi xác nhận cho cửa hàng để được giao nhanh nhất! ❤️</p>
+        <p style="color:var(--text-secondary); margin-bottom:24px; font-size:14px; line-height:1.6;">Yêu cầu báo giá của bạn đã được ghi nhận. Hãy nhấn nút dưới đây để <strong>sao chép thông tin yêu cầu</strong> và mở Zalo gửi xác nhận ngay cho Minh Minh Hưng Yên để được liên hệ tư vấn sớm nhất! ❤️</p>
         
         <div style="display:flex; flex-direction:column; gap:10px; max-width:320px; margin:0 auto 20px;">
           <a id="zalo-confirm-btn" href="https://zalo.me/0368386357" target="_blank" class="btn btn-primary" style="background:#0084ff; border-color:#0084ff; color:white; font-weight:800; display:flex; align-items:center; justify-content:center; gap:8px;">
-            <img src="assets/images/zalo-icon.png" alt="Zalo" style="width:20px;height:20px;object-fit:contain;border-radius:4px;"> Xác nhận đơn qua Zalo
+            <img src="assets/images/zalo-icon.png" alt="Zalo" style="width:20px;height:20px;object-fit:contain;border-radius:4px;"> Xác nhận yêu cầu qua Zalo
           </a>
           <a href="index.html" class="btn btn-ghost" style="font-weight:700;">
             🏠 Quay về trang chủ
@@ -282,25 +282,16 @@
               <div class="summary-body">
                 <div class="summary-row">
                   <span class="summary-label">Tạm tính</span>
-                  <span class="summary-value" id="subtotal-val">—</span>
+                  <span class="summary-value" id="subtotal-val">Liên hệ</span>
                 </div>
-                <div class="summary-row">
+                <div class="summary-row" style="display: none;">
                   <span class="summary-label">Phí vận chuyển</span>
-                  <span class="summary-value" id="shipping-val">—</span>
+                  <span class="summary-value" id="shipping-val">Liên hệ</span>
                 </div>
-                <div class="summary-divider"></div>
-                <div class="filter-label" style="margin-bottom:8px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Mã giảm giá</div>
-                <div class="promo-row">
-                  <input type="text" class="promo-input" id="promo-input" placeholder="Nhập mã khuyến mãi">
-                  <button class="promo-btn" onclick="applyPromo()">Áp dụng</button>
-                </div>
-                <div style="font-size:12px;color:var(--text-muted);min-height:18px;margin-bottom:8px;" id="promo-msg"></div>
-                <div class="summary-divider"></div>
                 <div class="summary-total-row">
                   <span class="summary-total-label">Tổng cộng</span>
-                  <span class="summary-total-value" id="total-val">—</span>
+                  <span class="summary-total-value" id="total-val">Liên hệ</span>
                 </div>
-                <p style="font-size:11px;color:var(--text-muted);margin-top:8px;">* Giá đã bao gồm VAT</p>
               </div>
             </div>
           </div>
@@ -377,10 +368,10 @@
                   <div class="form-error" id="err-address"></div>
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Ghi chú đơn hàng</label>
-                  <textarea class="form-control" id="f-note" rows="3" placeholder="Ghi chú về đơn hàng, thời gian giao hàng mong muốn..."></textarea>
+                  <label class="form-label">Ghi chú yêu cầu</label>
+                  <textarea class="form-control" id="f-note" rows="3" placeholder="Ghi chú về yêu cầu tư vấn, thời gian liên hệ mong muốn..."></textarea>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="display: none;">
                   <label class="form-label">Phương thức thanh toán</label>
                   <label class="payment-option selected" id="cod-option">
                     <input type="radio" name="payment" value="cod" checked>
@@ -392,9 +383,9 @@
                   </label>
                 </div>
                 <div style="margin-top:8px;">
-                  <button type="submit" class="btn-checkout">🛒 Đặt hàng ngay</button>
+                  <button type="submit" class="btn-checkout">🛒 Gửi yêu cầu tư vấn & báo giá</button>
                   <p style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:12px;">
-                    Bằng cách đặt hàng, bạn đồng ý với <a href="#" style="color:var(--gold);">Điều khoản dịch vụ</a> của chúng tôi
+                    Yêu cầu tư vấn hoàn toàn miễn phí. Đội ngũ Minh Minh sẽ liên hệ lại bạn trong 30 phút.
                   </p>
                 </div>
               </form>

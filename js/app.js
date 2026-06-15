@@ -490,10 +490,14 @@ const UI = {
 
   // Format currency
   formatPrice(amount) {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-    }).format(amount);
+    if (window.location.pathname.includes('/admin/')) {
+      if (!amount || amount === 0) return 'Liên hệ';
+      return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND',
+      }).format(amount);
+    }
+    return 'Liên hệ';
   },
 
   // Format date
@@ -510,6 +514,7 @@ const UI = {
 
   // Discount percent
   discountPercent(price, originalPrice) {
+    if (!window.location.pathname.includes('/admin/')) return 0;
     if (!originalPrice || originalPrice <= price) return 0;
     return Math.round((1 - price / originalPrice) * 100);
   },
@@ -545,7 +550,6 @@ const UI = {
 //   PRODUCT RENDERING
 // =============================================
 function renderProductCard(product) {
-  const discount = UI.discountPercent(product.price, product.originalPrice);
   const imgContent = product.imageUrl
     ? `<img src="${product.imageUrl}" alt="${product.name}" loading="lazy">`
     : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:60px;">${product.images?.[0] || '📦'}</div>`;
@@ -554,7 +558,6 @@ function renderProductCard(product) {
     <div class="product-card animate-fadeInUp" onclick="window.location='product.html?id=${product.id}'">
       <div class="product-img-wrapper" style="position: relative;">
         ${imgContent}
-        ${discount > 0 ? `<div class="product-badge-sale">-${discount}%</div>` : ''}
         <div style="position: absolute; top: 12px; right: 12px; z-index: 10; background: rgba(255, 255, 255, 0.95); padding: 4px 8px; border-radius: 6px; display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.12); border: 1px solid var(--border);" onclick="event.stopPropagation();">
           <input type="checkbox" class="compare-checkbox" data-id="${product.id}" onchange="toggleCompareProduct('${product.id}', this)" ${Compare.isAdded(product.id) ? 'checked' : ''} style="width:14px; height:14px; accent-color: var(--orange); cursor: pointer; margin: 0;">
           <span style="color: var(--text-primary); user-select: none;">So sánh</span>
@@ -565,7 +568,6 @@ function renderProductCard(product) {
         <h3 class="product-card-name">${product.name}</h3>
         <div class="product-card-price">
           <span class="price-current">${UI.formatPrice(product.price)}</span>
-          ${product.originalPrice > product.price ? `<span class="price-original">${UI.formatPrice(product.originalPrice)}</span>` : ''}
         </div>
         <div class="product-card-footer">
           <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); addToCartFromCard('${product.id}')">

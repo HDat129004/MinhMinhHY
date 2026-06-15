@@ -381,11 +381,11 @@
         <!-- Price + Original Price -->
         <div class="form-row" style="margin-bottom:var(--space-lg);">
           <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label" for="p-price">Giá bán (VNĐ) <span style="color:var(--error);">*</span></label>
-            <input type="number" id="p-price" class="form-control" placeholder="0" min="0" required />
+            <label class="form-label" for="p-price">Giá bán (VNĐ) <span style="font-size:11px;color:var(--text-muted);font-weight:normal;">(Để 0 hoặc trống sẽ là liên hệ/tư vấn)</span></label>
+            <input type="number" id="p-price" class="form-control" placeholder="Để 0 hoặc trống để hiển thị Liên hệ" min="0" />
           </div>
           <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label" for="p-original-price">Giá gốc (VNĐ)</label>
+            <label class="form-label" for="p-original-price">Giá gốc (VNĐ) <span style="font-size:11px;color:var(--text-muted);font-weight:normal;">(Không hiển thị ở trang khách)</span></label>
             <input type="number" id="p-original-price" class="form-control" placeholder="Để trống nếu không giảm giá" min="0" />
           </div>
         </div>
@@ -583,11 +583,11 @@
       const id = document.getElementById('edit-product-id').value;
       const name = document.getElementById('p-name').value.trim();
       const category = document.getElementById('p-category').value;
-      const price = parseFloat(document.getElementById('p-price').value);
+      const price = parseFloat(document.getElementById('p-price').value) || 0;
 
       if (!name) { alert('Vui lòng nhập tên sản phẩm.'); return; }
       if (!category) { alert('Vui lòng chọn danh mục.'); return; }
-      if (!price || price <= 0) { alert('Vui lòng nhập giá bán hợp lệ.'); return; }
+      if (price < 0) { alert('Giá bán không thể nhỏ hơn 0.'); return; }
 
       const specsRaw = document.getElementById('p-specs').value.trim();
       let specs = {};
