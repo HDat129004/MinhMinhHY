@@ -380,85 +380,7 @@
 
   <script src="js/app.js"></script>
   <script>
-    // --- Data Definition ---
-    const PROJECTS = [
-      {
-        id: 'proj_001',
-        name: 'Hệ thống Camera giám sát KCN Thăng Long II',
-        category: 'Camera',
-        icon: '📷',
-        location: 'KCN Thăng Long II, Yên Mỹ, Hưng Yên',
-        year: '2026',
-        desc: 'Thi công lắp đặt trọn gói hệ thống camera an ninh độ phân giải cao ngoài trời và trong xưởng sản xuất thiết bị điện tử rộng 2500m2. Hệ thống hoạt động 24/7, có khả năng nhìn rõ ban đêm và lưu trữ tập trung bảo mật cao.',
-        highlights: [
-          'Thi công đi dây cứng 32 Camera IP hồng ngoại xa 40m.',
-          'Cấu hình đầu ghi hình chuyên dụng, lưu trữ dữ liệu an toàn 30 ngày.',
-          'Đi dây âm trần và trong ống cứng bảo vệ chống chuột cắn, chống cháy.'
-        ],
-        devices: [
-          { name: 'Camera Dome Hikvision 2MP', qty: 12, link: 'prod_cam_001' },
-          { name: 'Camera Thân Dahua 4MP ngoài trời', qty: 20, link: 'prod_cam_002' },
-          { name: 'Đầu ghi hình Dahua 16 kênh chuẩn 4K', qty: 2, link: 'prod_cam_004' }
-        ]
-      },
-      {
-        id: 'proj_002',
-        name: 'Phủ sóng Wi-Fi Mesh Khách sạn Ruby Hưng Yên',
-        category: 'Mạng & Viễn thông',
-        icon: '📶',
-        location: 'Đường Nguyễn Văn Linh, TP. Hưng Yên',
-        year: '2025',
-        desc: 'Nâng cấp toàn bộ hạ tầng mạng LAN và phủ sóng Wi-Fi Mesh tốc độ cao chuẩn Wi-Fi 6 cho tòa nhà khách sạn 7 tầng, 45 phòng nghỉ. Tự động chuyển vùng thông minh giúp khách di chuyển liên tục không mất kết nối.',
-        highlights: [
-          'Lắp đặt 15 bộ phát Wi-Fi 6 chịu tải lớn 150+ user đồng thời.',
-          'Thiết lập mạng Wi-Fi khách biệt lập, giới hạn băng thông chống nghẽn mạng.',
-          'Đi cáp mạng Cat6 Commscope lõi đồng 100% âm tường đảm bảo thẩm mỹ.'
-        ],
-        devices: [
-          { name: 'Router Wi-Fi 6 Ruijie Reyee RG-EW3200GX', qty: 15, link: 'prod_net_001' },
-          { name: 'Switch POE Dahua 24 Cổng Gigabit', qty: 1, link: 'prod_net_002' },
-          { name: 'Cáp mạng Cat6 Commscope', qty: 4, link: 'prod_net_003' }
-        ]
-      },
-      {
-        id: 'proj_003',
-        name: 'Hạ tầng mạng & Lưu trữ NAS Công ty May Hưng Long',
-        category: 'IT & Máy chủ',
-        icon: '💻',
-        location: 'Thị xã Mỹ Hào, Hưng Yên',
-        year: '2026',
-        desc: 'Thiết lập toàn bộ hạ tầng máy tính văn phòng, bấm cáp mạng và cấu hình hệ thống lưu trữ tập trung NAS Synology phân quyền bảo mật dữ liệu, tự động sao lưu phòng chống virus mã hóa ransomware.',
-        highlights: [
-          'Setup hệ thống máy tính Dell Optiplex văn phòng cho 30 nhân viên.',
-          'Cấu hình phân quyền truy cập dữ liệu phòng ban trên NAS Synology.',
-          'Setup máy in đa năng in qua mạng LAN cho toàn bộ nhân sự.'
-        ],
-        devices: [
-          { name: 'Thiết bị lưu trữ NAS Synology DS224+', qty: 1, link: 'prod_it_001' },
-          { name: 'PC Đồng Bộ Dell Optiplex 3000 SFF', qty: 30, link: 'prod_it_002' },
-          { name: 'Laptop Dell Latitude 3540', qty: 5, link: 'prod_it_003' },
-          { name: 'Máy in Laser Canon MF264dw', qty: 2, link: 'prod_prn_001' }
-        ]
-      },
-      {
-        id: 'proj_004',
-        name: 'Thiết bị Máy Văn phòng & Hội thảo Trường THCS Yên Mỹ',
-        category: 'Máy in & Thiết bị',
-        icon: '🖨️',
-        location: 'Thị trấn Yên Mỹ, Hưng Yên',
-        year: '2026',
-        desc: 'Cung cấp trang thiết bị máy in đa chức năng kết nối Wi-Fi in ấn giáo án, đề thi nhanh chóng cho văn phòng Ban giám hiệu và lắp đặt máy chiếu Epson độ sáng cao phục vụ giảng dạy lớp học thông minh.',
-        highlights: [
-          'Lắp đặt 8 máy chiếu Epson EB-E01 kèm màn chiếu điện điều khiển từ xa.',
-          'Cung cấp máy in laser đa chức năng Canon in 2 mặt tốc độ cao.',
-          'Lắp đặt nhanh chóng trong ngày nghỉ, hướng dẫn giáo viên vận hành tận tình.'
-        ],
-        devices: [
-          { name: 'Máy in Laser Canon MF264dw', qty: 3, link: 'prod_prn_001' },
-          { name: 'Máy chiếu Epson EB-E01 XGA', qty: 8, link: 'prod_prn_002' }
-        ]
-      }
-    ];
+    const PROJECTS = Store.getProjects();
 
     const DEFAULT_REVIEWS = [
       { projectId: 'proj_001', name: 'Anh Quang (Giám đốc kỹ thuật)', rating: 5, comment: 'Đơn vị thi công cực kỳ nhiệt tình, hỗ trợ đi ống cứng an toàn, gọn gàng. Camera ban đêm hồng ngoại xem rất rõ nét.', date: '2026-05-15' },
@@ -520,8 +442,10 @@
         
         return `
           <div class="project-card animate-fadeInUp">
-            <div class="project-img-container">
-              ${p.icon}
+            <div class="project-img-container" style="padding:0; overflow:hidden; background:#141824;">
+              ${p.imageUrl 
+                ? `<img src="${p.imageUrl}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;">` 
+                : `<span style="font-size:80px;">${p.icon || '💼'}</span>`}
             </div>
             
             <div style="display:flex; flex-direction:column; justify-content:space-between;">

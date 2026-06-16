@@ -77,7 +77,7 @@
         /* === DỰ ÁN KIỀNG 3 CHÂN === */
         .project-card { border-radius: 20px; overflow: hidden; background: white; border: 1px solid #f1f5f9; box-shadow: 0 10px 20px rgba(0,0,0,0.03); transition: 0.4s; height: 100%; }
         .project-card:hover { box-shadow: 0 20px 40px rgba(0,0,0,0.1); transform: translateY(-8px); border-color: var(--green); }
-        .project-img-box { height: 240px; overflow: hidden; }
+        .project-img-box { height: 240px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #f8fafc; }
         .project-img-box img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s ease; }
         .project-card:hover .project-img-box img { transform: scale(1.08); }
         .project-info { padding: 25px; }
@@ -111,6 +111,59 @@
                 </div>
                 <div class="col-lg-6" data-aos="fade-left" data-aos-delay="200">
                     <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=800" alt="Hạ tầng IT" class="img-fluid hero-img">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT & ACHIEVEMENTS SECTION -->
+    <section id="about" class="py-5" style="background: var(--bg-light); border-bottom: 1px solid #e2e8f0;">
+        <div class="container py-4">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <span class="section-subtitle" style="text-align:left;">Về Chúng Tôi</span>
+                    <h2 class="fw-bold mb-4" style="font-size:2.2rem; color:var(--dark); text-transform:uppercase; line-height:1.2; letter-spacing:-1px;">
+                        Đối Tác Công Nghệ<br><span style="color:var(--orange);">Tin Cậy Hàng Đầu</span> tại Hưng Yên
+                    </h2>
+                    <p style="font-size:15px; color:var(--gray-text); line-height:1.8; margin-bottom:20px; text-align:justify;">
+                        Công ty TNHH Minh Minh Hưng Yên tự hào là tổng thầu tích hợp hệ thống hạ tầng IT và giải pháp an ninh chuyên nghiệp. Chúng tôi chuyên thi công mạng doanh nghiệp, lắp đặt camera giám sát xưởng, phủ sóng Wi-Fi diện rộng và thiết lập hạ tầng máy chủ cho các khu công nghiệp, doanh nghiệp, cơ quan hành chính và trường học.
+                    </p>
+                    <p style="font-size:15px; color:var(--gray-text); line-height:1.8; margin-bottom:24px; text-align:justify;">
+                        Với cam kết <strong>"Tận tâm - Chuyên nghiệp - Minh bạch"</strong>, chúng tôi luôn mang lại những giải pháp kỹ thuật tối ưu nhất, phù hợp với năng lực vận hành thực tế của từng khách hàng, cam kết bảo trì lâu dài 24/7.
+                    </p>
+                    <a href="#quote" class="btn-modern btn-orange text-decoration-none">Liên hệ tư vấn ngay</a>
+                </div>
+                <div class="col-lg-6" data-aos="fade-left">
+                    <div class="row g-4 text-center">
+                        <div class="col-6">
+                            <div style="background:white; padding:30px 20px; border-radius:20px; border:1px solid #e2e8f0; box-shadow:0 8px 30px rgba(0,0,0,0.02); height:100%;">
+                                <div style="font-size:3rem; font-weight:900; color:var(--green); line-height:1; margin-bottom:8px;">5+</div>
+                                <div style="font-size:13px; font-weight:800; text-transform:uppercase; color:var(--dark); letter-spacing:0.5px;">Năm Kinh Nghiệm</div>
+                                <div style="font-size:11px; color:var(--gray-text); margin-top:4px;">Từ năm 2021 đến nay</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div style="background:white; padding:30px 20px; border-radius:20px; border:1px solid #e2e8f0; box-shadow:0 8px 30px rgba(0,0,0,0.02); height:100%;">
+                                <div style="font-size:3rem; font-weight:900; color:var(--orange); line-height:1; margin-bottom:8px;">500+</div>
+                                <div style="font-size:13px; font-weight:800; text-transform:uppercase; color:var(--dark); letter-spacing:0.5px;">Dự Án Đã Làm</div>
+                                <div style="font-size:11px; color:var(--gray-text); margin-top:4px;">Nhà xưởng, tòa nhà, trường học</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div style="background:white; padding:30px 20px; border-radius:20px; border:1px solid #e2e8f0; box-shadow:0 8px 30px rgba(0,0,0,0.02); height:100%;">
+                                <div style="font-size:3rem; font-weight:900; color:var(--orange); line-height:1; margin-bottom:8px;">100%</div>
+                                <div style="font-size:13px; font-weight:800; text-transform:uppercase; color:var(--dark); letter-spacing:0.5px;">Hài Lòng</div>
+                                <div style="font-size:11px; color:var(--gray-text); margin-top:4px;">Khách hàng phản hồi 5 sao</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div style="background:white; padding:30px 20px; border-radius:20px; border:1px solid #e2e8f0; box-shadow:0 8px 30px rgba(0,0,0,0.02); height:100%;">
+                                <div style="font-size:3rem; font-weight:900; color:var(--green); line-height:1; margin-bottom:8px;">24/7</div>
+                                <div style="font-size:13px; font-weight:800; text-transform:uppercase; color:var(--dark); letter-spacing:0.5px;">Kỹ Thuật Tận Nơi</div>
+                                <div style="font-size:11px; color:var(--gray-text); margin-top:4px;">Ứng cứu sự cố mạng tức thời</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -175,6 +228,21 @@
         </div>
     </section>
 
+    <section id="projects" class="py-5 bg-light">
+        <div class="container py-5">
+            <span class="section-subtitle" data-aos="fade-up">Case Studies</span>
+            <h2 class="section-title" data-aos="fade-up">Dự Án Tiêu Biểu & Khách Hàng</h2>
+            
+            <div class="row g-4" id="landing-projects-grid">
+                <!-- Dữ liệu dự án được tải động từ JS -->
+            </div>
+            
+            <div class="text-center mt-5" data-aos="fade-up">
+                <a href="projects.html" class="btn-outline-tech">Xem toàn bộ dự án & Phản hồi từ khách hàng <i class="bi bi-arrow-right ms-1"></i></a>
+            </div>
+        </div>
+    </section>
+
     <section id="products" class="py-5">
         <div class="container py-5">
             <span class="section-subtitle" data-aos="fade-up">Thiết Bị Chính Hãng</span>
@@ -228,61 +296,6 @@
                         <div class="col"><div class="product-card"><img src="https://images.unsplash.com/photo-1556740749-887f6717defa?auto=format&fit=crop&q=80&w=300" alt="In 5"><h4>Máy in mã vạch / Bill</h4><p>Tốc độ cao cho kho xưởng, kế toán.</p><a href="#quote" class="btn-modern btn-orange btn-sm w-100">Báo giá</a></div></div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="projects" class="py-5 bg-light">
-        <div class="container py-5">
-            <span class="section-subtitle" data-aos="fade-up">Case Studies</span>
-            <h2 class="section-title" data-aos="fade-up">Dự Án Tiêu Biểu & Khách Hàng</h2>
-            
-            <div class="row g-4">
-                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="project-card">
-                        <div class="project-img-box"><img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=600" alt="KCN"></div>
-                        <div class="project-info">
-                            <h5 class="fw-bold mb-3">Hệ thống An ninh Nhà xưởng (KCN)</h5>
-                            <ul class="text-muted small ps-3 mb-0">
-                                <li class="mb-1">Thi công hệ thống 64 Camera giám sát.</li>
-                                <li class="mb-1">Triển khai cáp quang nội bộ xưởng 2000m2.</li>
-                                <li>Lắp đặt tủ mạng Server trung tâm.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="project-card">
-                        <div class="project-img-box"><img src="https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&q=80&w=600" alt="Hotel"></div>
-                        <div class="project-info">
-                            <h5 class="fw-bold mb-3">Phủ sóng Wi-Fi Mesh Khách sạn</h5>
-                            <ul class="text-muted small ps-3 mb-0">
-                                <li class="mb-1">Cấu hình Wi-Fi chịu tải 300+ User cùng lúc.</li>
-                                <li class="mb-1">Đi dây âm tường đảm bảo thẩm mỹ 100%.</li>
-                                <li>Setup hệ thống máy in lễ tân, tổng đài.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
-                    <div class="project-card">
-                        <div class="project-img-box"><img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=600" alt="Office"></div>
-                        <div class="project-info">
-                            <h5 class="fw-bold mb-3">Setup Toàn diện IT Văn phòng mới</h5>
-                            <ul class="text-muted small ps-3 mb-0">
-                                <li class="mb-1">Cung cấp 50 máy tính bàn & Laptop.</li>
-                                <li class="mb-1">Thiết kế sơ đồ, bấm dây mạng LAN từng bàn.</li>
-                                <li>Lắp đặt thiết bị máy in và Camera góc rộng.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="text-center mt-5" data-aos="fade-up">
-                <a href="projects.html" class="btn-outline-tech">Xem toàn bộ dự án & Phản hồi từ khách hàng <i class="bi bi-arrow-right ms-1"></i></a>
             </div>
         </div>
     </section>
@@ -388,6 +401,7 @@
         });
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Render products
             function renderLandingProductCard(p) {
                 return `
                     <div class="col">
@@ -427,6 +441,42 @@
                     grid.innerHTML = `<div class="w-100 text-center text-muted py-4">Chưa có sản phẩm thuộc danh mục này</div>`;
                 }
             });
+
+            // Render latest 3 projects dynamically
+            const landingProjectsGrid = document.getElementById('landing-projects-grid');
+            if (landingProjectsGrid) {
+                const latestProjects = Store.getProjects().slice(0, 3);
+                if (latestProjects.length > 0) {
+                    landingProjectsGrid.innerHTML = latestProjects.map((p, idx) => {
+                        const delay = (idx + 1) * 100;
+                        const highlightsHtml = p.highlights && p.highlights.length > 0
+                            ? p.highlights.slice(0, 3).map(h => `<li class="mb-1">${h}</li>`).join('')
+                            : `<li class="mb-1">${p.desc ? (p.desc.length > 100 ? p.desc.slice(0, 100) + '...' : p.desc) : ''}</li>`;
+                            
+                        const imgHtml = p.imageUrl
+                            ? `<img src="${p.imageUrl}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;transition:0.6s ease;">`
+                            : `<span style="font-size:80px;">${p.icon || '💼'}</span>`;
+
+                        return `
+                            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="${delay}">
+                                <div class="project-card" onclick="window.location='projects.html'" style="cursor:pointer;">
+                                    <div class="project-img-box">
+                                        ${imgHtml}
+                                    </div>
+                                    <div class="project-info">
+                                        <h5 class="fw-bold mb-3">${p.name}</h5>
+                                        <ul class="text-muted small ps-3 mb-0">
+                                            ${highlightsHtml}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    landingProjectsGrid.innerHTML = `<div class="w-100 text-center text-muted py-4">Chưa có dự án nào được cập nhật</div>`;
+                }
+            }
         });
     </script>
 </body>

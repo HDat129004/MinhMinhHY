@@ -12,6 +12,7 @@ const Store = {
     ORDERS:   'mm_orders',
     CART:     'mm_cart',
     SETTINGS: 'mm_settings',
+    PROJECTS: 'mm_projects',
   },
 
   get(key) {
@@ -52,6 +53,32 @@ const Store = {
   deleteProduct(id) {
     const products = this.getProducts().filter(p => p.id !== id);
     this.setProducts(products);
+  },
+
+  // Projects
+  getProjects()  { return this.get(this.KEYS.PROJECTS) || []; },
+  setProjects(p) { return this.set(this.KEYS.PROJECTS, p); },
+
+  getProject(id) {
+    return this.getProjects().find(p => p.id === id) || null;
+  },
+
+  addProject(project) {
+    const projects = this.getProjects();
+    projects.unshift(project);
+    this.setProjects(projects);
+  },
+
+  updateProject(id, updates) {
+    const projects = this.getProjects().map(p =>
+      p.id === id ? { ...p, ...updates, updatedAt: new Date().toISOString() } : p
+    );
+    this.setProjects(projects);
+  },
+
+  deleteProject(id) {
+    const projects = this.getProjects().filter(p => p.id !== id);
+    this.setProjects(projects);
   },
 
   // Orders
@@ -273,6 +300,94 @@ const SAMPLE_PRODUCTS = [
   }
 ];
 
+const SAMPLE_PROJECTS = [
+  {
+    id: 'proj_001',
+    name: 'Hệ thống Camera giám sát nhà xưởng Công ty nhựa Rạng Đông',
+    category: 'Camera',
+    icon: '📷',
+    imageUrl: '',
+    location: 'KCN Yên Mỹ, Hưng Yên',
+    year: '2026',
+    desc: 'Thi công trọn gói hệ thống 64 camera giám sát Hikvision độ phân giải cao cho khu vực sản xuất, kho bãi và xung quanh tường rào nhà máy. Hệ thống cáp quang nội bộ truyền dữ liệu tốc độ cao không trễ.',
+    highlights: [
+      'Lắp đặt 48 camera Dome hồng ngoại trong nhà xưởng sản xuất.',
+      'Lắp đặt 16 camera thân trụ ngoài trời chống nước IP67 giám sát tường rào.',
+      'Hệ thống lưu trữ trung tâm đầu ghi 64 kênh chuyên dụng lưu trữ 30 ngày.',
+      'Đi dây cáp quang truyền dẫn giữa 3 phân xưởng và văn phòng điều hành.'
+    ],
+    devices: [
+      { name: 'Camera Dome Hikvision 2MP', qty: 48, link: 'prod_cam_001' },
+      { name: 'Camera Thân Dahua 4MP ngoài trời', qty: 20, link: 'prod_cam_002' },
+      { name: 'Đầu ghi hình Dahua 16 kênh chuẩn 4K', qty: 2, link: 'prod_cam_004' }
+    ],
+    createdAt: new Date(Date.now() - 3 * 86400000).toISOString()
+  },
+  {
+    id: 'proj_002',
+    name: 'Phủ sóng Wi-Fi Mesh Khách sạn Ruby Hưng Yên',
+    category: 'Mạng & Viễn thông',
+    icon: '📶',
+    imageUrl: '',
+    location: 'Đường Nguyễn Văn Linh, TP. Hưng Yên',
+    year: '2025',
+    desc: 'Nâng cấp toàn bộ hạ tầng mạng LAN và phủ sóng Wi-Fi Mesh tốc độ cao chuẩn Wi-Fi 6 cho tòa nhà khách sạn 7 tầng, 45 phòng nghỉ. Tự động chuyển vùng thông minh giúp khách di chuyển liên tục không mất kết nối.',
+    highlights: [
+      'Lắp đặt 15 bộ phát Wi-Fi 6 chịu tải lớn 150+ user đồng thời.',
+      'Thiết lập mạng Wi-Fi khách biệt lập, giới hạn băng thông chống nghẽn mạng.',
+      'Đi cáp mạng Cat6 Commscope lõi đồng 100% âm tường đảm bảo thẩm mỹ.'
+    ],
+    devices: [
+      { name: 'Router Wi-Fi 6 Ruijie Reyee RG-EW3200GX', qty: 15, link: 'prod_net_001' },
+      { name: 'Switch POE Dahua 24 Cổng Gigabit', qty: 1, link: 'prod_net_002' },
+      { name: 'Cáp mạng Cat6 Commscope', qty: 4, link: 'prod_net_003' }
+    ],
+    createdAt: new Date(Date.now() - 2 * 86400000).toISOString()
+  },
+  {
+    id: 'proj_003',
+    name: 'Hạ tầng mạng & Lưu trữ NAS Công ty May Hưng Long',
+    category: 'IT & Máy chủ',
+    icon: '💻',
+    imageUrl: '',
+    location: 'Thị xã Mỹ Hào, Hưng Yên',
+    year: '2026',
+    desc: 'Thiết lập toàn bộ hạ tầng máy tính văn phòng, bấm cáp mạng và cấu hình hệ thống lưu trữ tập trung NAS Synology phân quyền bảo mật dữ liệu, tự động sao lưu phòng chống virus mã hóa ransomware.',
+    highlights: [
+      'Setup hệ thống máy tính Dell Optiplex văn phòng cho 30 nhân viên.',
+      'Cấu hình phân quyền truy cập dữ liệu phòng ban trên NAS Synology.',
+      'Setup máy in đa năng in qua mạng LAN cho toàn bộ nhân sự.'
+    ],
+    devices: [
+      { name: 'Thiết bị lưu trữ NAS Synology DS224+', qty: 1, link: 'prod_it_001' },
+      { name: 'PC Đồng Bộ Dell Optiplex 3000 SFF', qty: 30, link: 'prod_it_002' },
+      { name: 'Laptop Dell Latitude 3540', qty: 5, link: 'prod_it_003' },
+      { name: 'Máy in Laser Canon MF264dw', qty: 2, link: 'prod_prn_001' }
+    ],
+    createdAt: new Date(Date.now() - 1 * 86400000).toISOString()
+  },
+  {
+    id: 'proj_004',
+    name: 'Thiết bị Máy Văn phòng & Hội thảo Trường THCS Yên Mỹ',
+    category: 'Máy in & Thiết bị',
+    icon: '🖨️',
+    imageUrl: '',
+    location: 'Thị trấn Yên Mỹ, Hưng Yên',
+    year: '2026',
+    desc: 'Cung cấp trang thiết bị máy in đa chức năng kết nối Wi-Fi in ấn giáo án, đề thi nhanh chóng cho văn phòng Ban giám hiệu và lắp đặt máy chiếu Epson độ sáng cao phục vụ giảng dạy lớp học thông minh.',
+    highlights: [
+      'Lắp đặt 8 máy chiếu Epson EB-E01 kèm màn chiếu điện điều khiển từ xa.',
+      'Cung cấp máy in laser đa chức năng Canon in 2 mặt tốc độ cao.',
+      'Lắp đặt nhanh chóng trong ngày nghỉ, hướng dẫn giáo viên vận hành tận tình.'
+    ],
+    devices: [
+      { name: 'Máy in Laser Canon MF264dw', qty: 3, link: 'prod_prn_001' },
+      { name: 'Máy chiếu Epson EB-E01 XGA', qty: 8, link: 'prod_prn_002' }
+    ],
+    createdAt: new Date().toISOString()
+  }
+];
+
 function seedData() {
   const currentProducts = Store.getProducts();
   const validCategories = ['Camera', 'Mạng & Viễn thông', 'IT & Máy chủ', 'Máy in & Thiết bị', 'Văn phòng phẩm'];
@@ -280,6 +395,11 @@ function seedData() {
 
   if (currentProducts.length === 0 || hasOldCategories) {
     Store.setProducts(SAMPLE_PRODUCTS);
+  }
+
+  const currentProjects = Store.getProjects();
+  if (currentProjects.length === 0) {
+    Store.setProjects(SAMPLE_PROJECTS);
   }
 }
 

@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản lý dự án — Minh Minh Store Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+  <style>
+    /* Image preview wrapper */
+    .image-upload-box {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px 16px;
+      text-align: center;
+      cursor: pointer;
+      background: var(--bg-elevated);
+      transition: var(--ease);
+      margin-bottom: var(--space-md);
+    }
+    .image-upload-box:hover {
+      border-color: var(--gold);
+    }
+    .img-preview-container {
+      position: relative;
+      width: 100%;
+      height: 180px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-bottom: var(--space-md);
+      background: #000;
+    }
+    .img-preview-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .img-preview-remove {
+      position: absolute;
+      top: 8px; right: 8px;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: rgba(239, 68, 68, 0.9);
+      color: white;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      font-weight: bold;
+    }
+    .img-preview-remove:hover {
+      background: rgb(220, 38, 38);
+    }
+
+    /* Product linking list */
+    .devices-selector-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      max-height: 220px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      padding: 10px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      margin-top: 6px;
+    }
+
+    @media (max-width: 600px) {
+      .devices-selector-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="admin-body">
+
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-logo" style="display:flex;align-items:center;">
+      <div style="font-size: 2rem; font-weight: 900; letter-spacing: -2px; line-height: 1; display:flex;">
+        <span style="color: var(--orange);">M</span><span style="color: var(--green);">M</span>
+      </div>
+      <div style="border-left: 2px solid #e2e8f0; margin-left: 8px; padding-left: 8px; line-height: 1.1;">
+        <span style="display:block; font-size: 8px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Hệ thống</span>
+        <strong style="font-size: 13px; color: var(--text-primary); font-family: var(--font-ui); font-weight: 800;">QUẢN TRỊ ADMIN</strong>
+      </div>
+    </div>
+
+    <nav class="admin-nav">
+      <div class="admin-nav-section">
+        <div class="admin-nav-label">Tổng quan</div>
+        <a href="dashboard.html" class="admin-nav-item">
+          <span class="admin-nav-icon">📊</span>
+          Dashboard
+        </a>
+      </div>
+      <div class="admin-nav-section">
+        <div class="admin-nav-label">Quản lý</div>
+        <a href="products.html" class="admin-nav-item">
+          <span class="admin-nav-icon">📦</span>
+          Sản phẩm
+        </a>
+        <a href="orders.html" class="admin-nav-item">
+          <span class="admin-nav-icon">🛒</span>
+          Đơn hàng
+        </a>
+        <a href="bookings.html" class="admin-nav-item">
+          <span class="admin-nav-icon">📅</span>
+          Đặt lịch
+        </a>
+        <a href="projects.html" class="admin-nav-item active">
+          <span class="admin-nav-icon">💼</span>
+          Dự án (Đăng bài)
+        </a>
+      </div>
+      <div class="admin-nav-section">
+        <div class="admin-nav-label">Hệ thống</div>
+        <a href="#" class="admin-nav-item">
+          <span class="admin-nav-icon">⚙️</span>
+          Cài đặt
+        </a>
+      </div>
+    </nav>
+
+    <div class="admin-sidebar-footer">
+      <div class="admin-user-info">
+        <div class="admin-avatar">A</div>
+        <div>
+          <div class="admin-user-name">Administrator</div>
+          <div class="admin-user-role">Quản trị viên</div>
+        </div>
+      </div>
+      <button class="admin-logout-btn" onclick="adminLogout()">
+        🚪 Đăng xuất
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="admin-main">
+    <header class="admin-header">
+      <div class="admin-header-left">
+        <div class="admin-page-title">💼 Quản lý bài đăng dự án</div>
+        <div class="admin-page-subtitle" id="project-subtitle">Đang tải...</div>
+      </div>
+      <div class="admin-header-right">
+        <button class="btn btn-primary" onclick="openAddModal()" style="display:flex;align-items:center;gap:8px;">
+          ➕ Đăng dự án mới
+        </button>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <!-- Filter Bar -->
+      <div class="filter-bar" style="margin-bottom:var(--space-lg);">
+        <input type="text" class="form-control" id="search-input" placeholder="Tìm kiếm tên dự án, địa điểm..." oninput="filterProjects()" style="max-width:320px;" />
+        <select class="form-control" id="category-filter" style="width:200px;" onchange="filterProjects()">
+          <option value="">Tất cả danh mục</option>
+          <option value="Camera">Camera</option>
+          <option value="Mạng & Viễn thông">Mạng & Viễn thông</option>
+          <option value="IT & Máy chủ">IT & Máy chủ</option>
+          <option value="Máy in & Thiết bị">Máy in & Thiết bị</option>
+        </select>
+      </div>
+
+      <!-- Projects Table -->
+      <div class="admin-table-wrapper">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th style="width:80px;">Hình ảnh</th>
+              <th>Tên dự án</th>
+              <th>Danh mục</th>
+              <th>Địa điểm</th>
+              <th>Năm</th>
+              <th style="width:120px;text-align:center;">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="projects-tbody">
+            <tr>
+              <td colspan="6" style="text-align:center;color:var(--text-muted);padding:48px;">Đang tải dữ liệu...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJECT MODAL -->
+  <div class="modal-overlay" id="project-modal" onclick="handleModalOverlayClick(event)">
+    <div class="modal-box" style="max-width: 680px;">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-title">Đăng dự án tiêu biểu</div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <input type="hidden" id="edit-project-id" value="" />
+
+        <!-- Title -->
+        <div class="form-group">
+          <label class="form-label" for="proj-name">Tên dự án/công trình <span style="color:var(--error);">*</span></label>
+          <input type="text" id="proj-name" class="form-control" placeholder="Ví dụ: Thi công hạ tầng Camera giám sát Công ty nhựa Rạng Đông" required />
+        </div>
+
+        <!-- Category + Location + Year -->
+        <div class="form-row" style="margin-bottom:var(--space-lg);">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="proj-category">Danh mục <span style="color:var(--error);">*</span></label>
+            <select id="proj-category" class="form-control" required>
+              <option value="">Chọn danh mục</option>
+              <option value="Camera">Camera</option>
+              <option value="Mạng & Viễn thông">Mạng & Viễn thông</option>
+              <option value="IT & Máy chủ">IT & Máy chủ</option>
+              <option value="Máy in & Thiết bị">Máy in & Thiết bị</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="proj-location">Địa điểm thi công <span style="color:var(--error);">*</span></label>
+            <input type="text" id="proj-location" class="form-control" placeholder="Yên Mỹ, Hưng Yên" required />
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="proj-year">Năm hoàn thành <span style="color:var(--error);">*</span></label>
+            <input type="text" id="proj-year" class="form-control" placeholder="2026" required />
+          </div>
+        </div>
+
+        <!-- Image Upload (Facebook Style) -->
+        <div class="form-group">
+          <label class="form-label">Hình ảnh thực tế dự án</label>
+          <input type="file" id="proj-image-file" accept="image/*" style="display:none;" onchange="handleImageSelect(event)" />
+          
+          <!-- Image preview -->
+          <div id="image-preview-wrap" style="display:none;">
+            <div class="img-preview-container">
+              <img id="image-preview-img" src="" alt="Preview" />
+              <button type="button" class="img-preview-remove" onclick="removeSelectedImage()">✕</button>
+            </div>
+          </div>
+
+          <!-- Select box -->
+          <div class="image-upload-box" id="image-upload-trigger" onclick="document.getElementById('proj-image-file').click()">
+            <div style="font-size:36px;margin-bottom:8px;">📸</div>
+            <div style="font-size:13px;font-weight:700;color:var(--text-primary);">Chọn ảnh chụp thực tế dự án từ máy tính</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Hệ thống tự động nén ảnh tối ưu dung lượng</div>
+          </div>
+        </div>
+
+        <!-- Emoji Icon backup -->
+        <div class="form-row" style="margin-bottom:var(--space-lg);">
+          <div class="form-group" style="margin-bottom:0; max-width: 140px;">
+            <label class="form-label" for="proj-icon">Emoji dự phòng</label>
+            <input type="text" id="proj-icon" class="form-control" placeholder="💼" maxlength="2" />
+          </div>
+          <div class="form-group" style="margin-bottom:0; flex-grow:1;">
+            <span style="font-size:11px;color:var(--text-muted);display:block;margin-top:28px;">(Sử dụng khi không tải ảnh thực tế lên)</span>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label class="form-label" for="proj-desc">Giới thiệu/Mô tả dự án <span style="color:var(--error);">*</span></label>
+          <textarea id="proj-desc" class="form-control" rows="3" placeholder="Nhập tóm tắt mô tả về nhu cầu của khách hàng và giải pháp đã thực hiện..." required></textarea>
+        </div>
+
+        <!-- Highlights (One per line) -->
+        <div class="form-group">
+          <label class="form-label" for="proj-highlights">Các hạng mục công việc đã làm (Mỗi dòng một hạng mục) <span style="color:var(--error);">*</span></label>
+          <textarea id="proj-highlights" class="form-control" rows="4" placeholder="Lắp đặt 48 camera Dome hồng ngoại trong nhà xưởng&#10;Đi dây âm trần và trong ống cứng bảo vệ&#10;Cấu hình hệ thống lưu trữ trung tâm" required></textarea>
+        </div>
+
+        <!-- Linked Devices Checklist -->
+        <div class="form-group">
+          <label class="form-label">Thiết bị lắp đặt liên kết (từ kho sản phẩm)</label>
+          <div class="devices-selector-grid" id="project-devices-container">
+            <!-- Dynamically populated products checklist -->
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal()" style="background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-secondary);padding:10px 24px;border-radius:var(--radius-md);font-weight:600;">
+          Hủy
+        </button>
+        <button class="btn btn-primary" onclick="saveProject()" id="save-btn" style="padding:10px 28px;">
+          💾 Lưu bài đăng dự án
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/admin.js"></script>
+  <script>
+    requireAuth();
+
+    let allProjects = [];
+    let selectedImageData = '';
+
+    // ---- Load ----
+    function loadProjects() {
+      allProjects = Store.getProjects();
+      document.getElementById('project-subtitle').textContent = `${allProjects.length} dự án đã đăng`;
+      filterProjects();
+    }
+
+    function filterProjects() {
+      const q = document.getElementById('search-input').value.toLowerCase();
+      const cat = document.getElementById('category-filter').value;
+
+      let filtered = allProjects.filter(p => {
+        const matchQ = !q || p.name.toLowerCase().includes(q) || p.location.toLowerCase().includes(q);
+        const matchCat = !cat || p.category === cat;
+        return matchQ && matchCat;
+      });
+
+      renderProjectsTable(filtered);
+    }
+
+    function renderProjectsTable(projects) {
+      const tbody = document.getElementById('projects-tbody');
+      if (!projects.length) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:48px;">Không tìm thấy dự án nào phù hợp</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = projects.map(p => {
+        const imgContent = p.imageUrl 
+          ? `<img src="${p.imageUrl}" style="width:50px;height:50px;object-fit:cover;border-radius:6px;border:1px solid var(--border);">`
+          : `<div style="font-size:28px;width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:var(--bg-elevated);border-radius:6px;border:1px solid var(--border);">${p.icon || '💼'}</div>`;
+
+        return `
+          <tr>
+            <td>${imgContent}</td>
+            <td><strong style="color:var(--text-primary);font-size:14px;">${p.name}</strong></td>
+            <td><span class="status-badge badge-active">${p.category}</span></td>
+            <td>${p.location}</td>
+            <td>${p.year}</td>
+            <td>
+              <div class="table-actions" style="justify-content:center;">
+                <button class="btn-table-action" onclick="openEditModal('${p.id}')" title="Chỉnh sửa">✏️</button>
+                <button class="btn-table-action delete" onclick="deleteProject('${p.id}')" title="Xóa">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // ---- Image Upload/Compression ----
+    function handleImageSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const img = new Image();
+        img.onload = function() {
+          // Compress image via Canvas
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          const MAX_SIZE = 800;
+          if (width > height) {
+            if (width > MAX_SIZE) {
+              height *= MAX_SIZE / width;
+              width = MAX_SIZE;
+            }
+          } else {
+            if (height > MAX_SIZE) {
+              width *= MAX_SIZE / height;
+              height = MAX_SIZE;
+            }
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          selectedImageData = canvas.toDataURL('image/jpeg', 0.75);
+          
+          document.getElementById('image-preview-img').src = selectedImageData;
+          document.getElementById('image-preview-wrap').style.display = 'block';
+          document.getElementById('image-upload-trigger').style.display = 'none';
+        };
+        img.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeSelectedImage() {
+      selectedImageData = '';
+      document.getElementById('image-preview-img').src = '';
+      document.getElementById('image-preview-wrap').style.display = 'none';
+      document.getElementById('image-upload-trigger').style.display = 'block';
+      document.getElementById('proj-image-file').value = '';
+    }
+
+    // ---- Product link list ----
+    function renderProductLinkList(selectedDevices = []) {
+      const products = Store.getProducts().filter(p => p.active);
+      const container = document.getElementById('project-devices-container');
+      if (products.length === 0) {
+        container.innerHTML = '<div style="font-size:12px;color:var(--text-muted);grid-column: 1 / -1;">Không có sản phẩm nào hoạt động để liên kết.</div>';
+        return;
+      }
+      
+      container.innerHTML = products.map(p => {
+        const matched = selectedDevices.find(d => d.link === p.id);
+        const checked = matched ? 'checked' : '';
+        const qty = matched ? matched.qty : 1;
+        return `
+          <label style="display:flex; align-items:center; gap:8px; background:var(--bg-elevated); padding:8px 12px; border-radius:6px; border:1px solid var(--border); font-size:13px; cursor:pointer;">
+            <input type="checkbox" class="device-cb" data-id="${p.id}" data-name="${p.name}" ${checked} onchange="toggleDeviceInput(this)" style="width:16px; height:16px; accent-color:var(--gold); margin:0;">
+            <span>${p.images?.[0] || '📦'}</span>
+            <span style="flex-grow:1; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:180px;" title="${p.name}">${p.name}</span>
+            <span style="font-size:11px; color:var(--text-muted); font-weight:normal; margin-left:auto;">SL:</span>
+            <input type="number" class="device-qty" data-id="${p.id}" value="${qty}" min="1" max="99" ${checked ? '' : 'disabled'} style="width:50px; background:var(--bg-base); border:1px solid var(--border); border-radius:4px; padding:2px 6px; text-align:center; color:var(--text-primary); font-size:12px;" onclick="event.stopPropagation()">
+          </label>
+        `;
+      }).join('');
+    }
+
+    window.toggleDeviceInput = (cb) => {
+      const qtyInput = cb.parentElement.querySelector('.device-qty');
+      qtyInput.disabled = !cb.checked;
+    };
+
+    // ---- Modal controls ----
+    function openAddModal() {
+      document.getElementById('modal-title').textContent = '➕ Đăng dự án tiêu biểu mới';
+      document.getElementById('edit-project-id').value = '';
+      document.getElementById('proj-name').value = '';
+      document.getElementById('proj-category').value = '';
+      document.getElementById('proj-location').value = '';
+      document.getElementById('proj-year').value = '';
+      document.getElementById('proj-icon').value = '💼';
+      document.getElementById('proj-desc').value = '';
+      document.getElementById('proj-highlights').value = '';
+      removeSelectedImage();
+      renderProductLinkList([]);
+      openModal();
+    }
+
+    function openEditModal(id) {
+      const p = Store.getProject(id);
+      if (!p) return;
+
+      document.getElementById('modal-title').textContent = '✏️ Chỉnh sửa bài đăng dự án';
+      document.getElementById('edit-project-id').value = id;
+      document.getElementById('proj-name').value = p.name || '';
+      document.getElementById('proj-category').value = p.category || '';
+      document.getElementById('proj-location').value = p.location || '';
+      document.getElementById('proj-year').value = p.year || '';
+      document.getElementById('proj-icon').value = p.icon || '💼';
+      document.getElementById('proj-desc').value = p.desc || '';
+      document.getElementById('proj-highlights').value = p.highlights ? p.highlights.join('\n') : '';
+      
+      removeSelectedImage();
+      if (p.imageUrl) {
+        selectedImageData = p.imageUrl;
+        document.getElementById('image-preview-img').src = selectedImageData;
+        document.getElementById('image-preview-wrap').style.display = 'block';
+        document.getElementById('image-upload-trigger').style.display = 'none';
+      }
+
+      renderProductLinkList(p.devices || []);
+      openModal();
+    }
+
+    function openModal() {
+      document.getElementById('project-modal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('project-modal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function handleModalOverlayClick(e) {
+      if (e.target === document.getElementById('project-modal')) closeModal();
+    }
+
+    // ---- Save ----
+    function saveProject() {
+      const id = document.getElementById('edit-project-id').value;
+      const name = document.getElementById('proj-name').value.trim();
+      const category = document.getElementById('proj-category').value;
+      const location = document.getElementById('proj-location').value.trim();
+      const year = document.getElementById('proj-year').value.trim();
+      const desc = document.getElementById('proj-desc').value.trim();
+      const highlightsRaw = document.getElementById('proj-highlights').value.trim();
+
+      if (!name) { alert('Vui lòng nhập tên dự án.'); return; }
+      if (!category) { alert('Vui lòng chọn danh mục.'); return; }
+      if (!location) { alert('Vui lòng nhập địa điểm.'); return; }
+      if (!year) { alert('Vui lòng nhập năm hoàn thành.'); return; }
+      if (!desc) { alert('Vui lòng nhập mô tả dự án.'); return; }
+      if (!highlightsRaw) { alert('Vui lòng nhập các hạng mục triển khai.'); return; }
+
+      const highlights = highlightsRaw.split('\n').map(h => h.trim()).filter(Boolean);
+
+      // Collect selected devices
+      const devices = [];
+      document.querySelectorAll('.device-cb:checked').forEach(cb => {
+        const pId = cb.dataset.id;
+        const pName = cb.dataset.name;
+        const qty = parseInt(cb.parentElement.querySelector('.device-qty').value) || 1;
+        devices.push({ name: pName, qty, link: pId });
+      });
+
+      const projectData = {
+        name,
+        category,
+        location,
+        year,
+        desc,
+        highlights,
+        devices,
+        imageUrl: selectedImageData,
+        icon: document.getElementById('proj-icon').value.trim() || '💼'
+      };
+
+      if (id) {
+        Store.updateProject(id, projectData);
+        UI.toast('Đã cập nhật bài đăng dự án thành công!', 'success');
+      } else {
+        Store.addProject({
+          ...projectData,
+          id: UI.genId('proj'),
+          createdAt: new Date().toISOString()
+        });
+        UI.toast('Đã đăng dự án tiêu biểu mới thành công!', 'success');
+      }
+
+      closeModal();
+      loadProjects();
+    }
+
+    // ---- Delete ----
+    function deleteProject(id) {
+      const p = Store.getProject(id);
+      if (!p) return;
+      if (!confirm(`Bạn có chắc muốn xóa dự án:\n"${p.name}"?\n\nHành động này không thể hoàn tác!`)) return;
+      Store.deleteProject(id);
+      UI.toast(`Đã xóa bài đăng dự án "${p.name}"`, 'info');
+      loadProjects();
+    }
+
+    // ---- Keyboard ----
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // ---- Init ----
+    document.addEventListener('DOMContentLoaded', () => {
+      loadProjects();
+      initAdminNav();
+    });
+  </script>
+</body>
+</html>
