@@ -303,21 +303,21 @@ const SAMPLE_PRODUCTS = [
 const SAMPLE_PROJECTS = [
   {
     id: 'proj_001',
-    name: 'Hệ thống Camera giám sát nhà xưởng Công ty nhựa Rạng Đông',
+    name: 'Hệ thống hạ tầng Camera & Điện nhẹ Nhà xưởng Công ty Tam Dương',
     category: 'Camera',
     icon: '📷',
     imageUrl: '',
     location: 'KCN Yên Mỹ, Hưng Yên',
     year: '2026',
-    desc: 'Thi công trọn gói hệ thống 64 camera giám sát Hikvision độ phân giải cao cho khu vực sản xuất, kho bãi và xung quanh tường rào nhà máy. Hệ thống cáp quang nội bộ truyền dữ liệu tốc độ cao không trễ.',
+    desc: 'Thi công trọn gói hạ tầng camera giám sát và mạng LAN cho nhà xưởng sản xuất quy mô 3000m² của Công ty Tam Dương. Đảm bảo tầm nhìn bao quát toàn bộ nhà xưởng, đường truyền ổn định không nhiễu.',
     highlights: [
-      'Lắp đặt 48 camera Dome hồng ngoại trong nhà xưởng sản xuất.',
-      'Lắp đặt 16 camera thân trụ ngoài trời chống nước IP67 giám sát tường rào.',
-      'Hệ thống lưu trữ trung tâm đầu ghi 64 kênh chuyên dụng lưu trữ 30 ngày.',
-      'Đi dây cáp quang truyền dẫn giữa 3 phân xưởng và văn phòng điều hành.'
+      'Lắp đặt 32 camera thân trụ ngoài trời chống nước IP67 giám sát chu vi.',
+      'Đi dây cáp mạng và bảo vệ trong ống PVC luồn dây chuyên dụng 3000m².',
+      'Thiết lập tủ Rack điều khiển tập trung và màn hình giám sát 55 inch tại phòng bảo vệ.',
+      'Hệ thống được thiết kế tối ưu, khả năng bảo trì định kỳ dễ dàng, cam kết hỗ trợ trọn đời.'
     ],
     devices: [
-      { name: 'Camera Dome Hikvision 2MP', qty: 48, link: 'prod_cam_001' },
+      { name: 'Camera Dome Hikvision 2MP', qty: 12, link: 'prod_cam_001' },
       { name: 'Camera Thân Dahua 4MP ngoài trời', qty: 20, link: 'prod_cam_002' },
       { name: 'Đầu ghi hình Dahua 16 kênh chuẩn 4K', qty: 2, link: 'prod_cam_004' }
     ],
@@ -325,64 +325,66 @@ const SAMPLE_PROJECTS = [
   },
   {
     id: 'proj_002',
-    name: 'Phủ sóng Wi-Fi Mesh Khách sạn Ruby Hưng Yên',
-    category: 'Mạng & Viễn thông',
-    icon: '📶',
+    name: 'Lắp đặt 40 mắt Camera Trường tiểu học Tân Lập (Liêu Xá)',
+    category: 'Camera',
+    icon: '🏫',
     imageUrl: '',
-    location: 'Đường Nguyễn Văn Linh, TP. Hưng Yên',
-    year: '2025',
-    desc: 'Nâng cấp toàn bộ hạ tầng mạng LAN và phủ sóng Wi-Fi Mesh tốc độ cao chuẩn Wi-Fi 6 cho tòa nhà khách sạn 7 tầng, 45 phòng nghỉ. Tự động chuyển vùng thông minh giúp khách di chuyển liên tục không mất kết nối.',
+    location: 'Liêu Xá, Yên Mỹ, Hưng Yên',
+    year: '2026',
+    desc: 'Triển khai hệ thống 40 mắt camera giám sát trường học an toàn cho Trường tiểu học Tân Lập tại Liêu Xá, Yên Mỹ. Hệ thống camera có hồng ngoại xa độ nét cao giúp Ban giám hiệu và phụ huynh theo dõi khuôn viên lớp học, cổng trường và hành lang.',
     highlights: [
-      'Lắp đặt 15 bộ phát Wi-Fi 6 chịu tải lớn 150+ user đồng thời.',
-      'Thiết lập mạng Wi-Fi khách biệt lập, giới hạn băng thông chống nghẽn mạng.',
-      'Đi cáp mạng Cat6 Commscope lõi đồng 100% âm tường đảm bảo thẩm mỹ.'
+      'Triển khai lắp đặt 40 camera Dome và Thân trụ độ phân giải 2MP/4MP.',
+      'Cấu hình phân quyền giám sát camera cho từng lớp học và ban giám hiệu.',
+      'Cam kết bảo hành tận nơi 1 đổi 1 nhanh chóng, bảo dưỡng hệ thống định kỳ miễn phí.',
+      'Hỗ trợ kỹ thuật trực tiếp và trực tuyến 24/7 khi trường học yêu cầu hoàn toàn miễn phí.'
     ],
     devices: [
-      { name: 'Router Wi-Fi 6 Ruijie Reyee RG-EW3200GX', qty: 15, link: 'prod_net_001' },
-      { name: 'Switch POE Dahua 24 Cổng Gigabit', qty: 1, link: 'prod_net_002' },
-      { name: 'Cáp mạng Cat6 Commscope', qty: 4, link: 'prod_net_003' }
+      { name: 'Camera Dome Hikvision 2MP', qty: 30, link: 'prod_cam_001' },
+      { name: 'Camera Thân Dahua 4MP ngoài trời', qty: 10, link: 'prod_cam_002' },
+      { name: 'Đầu ghi hình Dahua 16 kênh chuẩn 4K', qty: 3, link: 'prod_cam_004' }
     ],
     createdAt: new Date(Date.now() - 2 * 86400000).toISOString()
   },
   {
     id: 'proj_003',
+    name: 'Hạ tầng mạng chịu tải cao cho các Trường học & Nhà dân tại Yên Mỹ',
+    category: 'Mạng & Viễn thông',
+    icon: '📶',
+    imageUrl: '',
+    location: 'Yên Mỹ, Hưng Yên',
+    year: '2026',
+    desc: 'Tư vấn và thi công hệ thống mạng cáp quang, Wi-Fi chịu tải cao cho các trường học và khu dân cư trên địa bàn huyện Yên Mỹ. Dự án đạt tỷ lệ hài lòng cực kỳ cao nhờ đường truyền siêu tốc, không bị nghẽn mạng và dịch vụ chăm sóc hậu mãi tận tâm.',
+    highlights: [
+      'Lắp đặt hệ thống Wi-Fi 6 chuyên dụng chịu tải đến 150+ user đồng thời cho trường học.',
+      'Hỗ trợ khắc phục sự cố mạng khẩn cấp tận nơi 24/7 hoàn toàn miễn phí.',
+      'Bảo trì định kỳ và hỗ trợ trọn đời mọi yêu cầu kỹ thuật từ phía nhà dân và nhà trường.',
+      'Cam kết thiết bị chính hãng 100% kèm chế độ hậu mãi chu đáo nhất khu vực Hưng Yên.'
+    ],
+    devices: [
+      { name: 'Router Wi-Fi 6 Ruijie Reyee RG-EW3200GX', qty: 25, link: 'prod_net_001' },
+      { name: 'Switch POE Dahua 24 Cổng Gigabit', qty: 5, link: 'prod_net_002' },
+      { name: 'Cáp mạng Cat6 Commscope', qty: 12, link: 'prod_net_003' }
+    ],
+    createdAt: new Date(Date.now() - 1 * 86400000).toISOString()
+  },
+  {
+    id: 'proj_004',
     name: 'Hạ tầng mạng & Lưu trữ NAS Công ty May Hưng Long',
     category: 'IT & Máy chủ',
     icon: '💻',
     imageUrl: '',
     location: 'Thị xã Mỹ Hào, Hưng Yên',
     year: '2026',
-    desc: 'Thiết lập toàn bộ hạ tầng máy tính văn phòng, bấm cáp mạng và cấu hình hệ thống lưu trữ tập trung NAS Synology phân quyền bảo mật dữ liệu, tự động sao lưu phòng chống virus mã hóa ransomware.',
+    desc: 'Thiết lập toàn bộ hạ tầng máy tính văn phòng, bấm cáp mạng và cấu hình hệ thống lưu trữ tập trung NAS Synology phân quyền bảo mật dữ liệu, tự động sao lưu phòng chống ransomware.',
     highlights: [
       'Setup hệ thống máy tính Dell Optiplex văn phòng cho 30 nhân viên.',
       'Cấu hình phân quyền truy cập dữ liệu phòng ban trên NAS Synology.',
-      'Setup máy in đa năng in qua mạng LAN cho toàn bộ nhân sự.'
+      'Hậu mãi chu đáo, hỗ trợ khắc phục mọi sự cố kỹ thuật hoàn toàn miễn phí khi khách hàng cần.'
     ],
     devices: [
       { name: 'Thiết bị lưu trữ NAS Synology DS224+', qty: 1, link: 'prod_it_001' },
       { name: 'PC Đồng Bộ Dell Optiplex 3000 SFF', qty: 30, link: 'prod_it_002' },
-      { name: 'Laptop Dell Latitude 3540', qty: 5, link: 'prod_it_003' },
-      { name: 'Máy in Laser Canon MF264dw', qty: 2, link: 'prod_prn_001' }
-    ],
-    createdAt: new Date(Date.now() - 1 * 86400000).toISOString()
-  },
-  {
-    id: 'proj_004',
-    name: 'Thiết bị Máy Văn phòng & Hội thảo Trường THCS Yên Mỹ',
-    category: 'Máy in & Thiết bị',
-    icon: '🖨️',
-    imageUrl: '',
-    location: 'Thị trấn Yên Mỹ, Hưng Yên',
-    year: '2026',
-    desc: 'Cung cấp trang thiết bị máy in đa chức năng kết nối Wi-Fi in ấn giáo án, đề thi nhanh chóng cho văn phòng Ban giám hiệu và lắp đặt máy chiếu Epson độ sáng cao phục vụ giảng dạy lớp học thông minh.',
-    highlights: [
-      'Lắp đặt 8 máy chiếu Epson EB-E01 kèm màn chiếu điện điều khiển từ xa.',
-      'Cung cấp máy in laser đa chức năng Canon in 2 mặt tốc độ cao.',
-      'Lắp đặt nhanh chóng trong ngày nghỉ, hướng dẫn giáo viên vận hành tận tình.'
-    ],
-    devices: [
-      { name: 'Máy in Laser Canon MF264dw', qty: 3, link: 'prod_prn_001' },
-      { name: 'Máy chiếu Epson EB-E01 XGA', qty: 8, link: 'prod_prn_002' }
+      { name: 'Laptop Dell Latitude 3540', qty: 5, link: 'prod_it_003' }
     ],
     createdAt: new Date().toISOString()
   }
@@ -398,7 +400,8 @@ function seedData() {
   }
 
   const currentProjects = Store.getProjects();
-  if (currentProjects.length === 0) {
+  const hasOldProjects = currentProjects.some(p => p.id === 'proj_001' && p.name.includes('Rạng Đông'));
+  if (currentProjects.length === 0 || hasOldProjects) {
     Store.setProjects(SAMPLE_PROJECTS);
   }
 }
