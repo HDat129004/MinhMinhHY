@@ -537,6 +537,27 @@
       document.getElementById('success-order-id').textContent = orderId;
       document.getElementById('success-state').style.display = 'block';
 
+      // Send email using FormSubmit AJAX
+      fetch("https://formsubmit.co/ajax/minhminhhungyenco.ltd@gmail.com", {
+        method: "POST",
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          "Tiêu đề": "YÊU CẦU BÁO GIÁ & TƯ VẤN ĐƠN HÀNG MỚI",
+          "Mã đơn hàng": orderId,
+          "Họ tên khách hàng": name,
+          "Số điện thoại": phone,
+          "Email liên hệ": document.getElementById('f-email').value || 'Không có',
+          "Tỉnh/Thành": province,
+          "Địa chỉ chi tiết": address,
+          "Ghi chú khách hàng": document.getElementById('f-note').value || 'Không có',
+          "Danh sách sản phẩm": items.map(i => `${i.name} (SL: ${i.qty})`).join(", "),
+          "Tổng giá trị": UI.formatPrice(subtotal + shipping)
+        })
+      }).catch(err => console.error("Email send failed:", err));
+
       // Setup Zalo message auto-copy
       const zaloMsg = "Chào Minh Minh Hưng Yên, tôi vừa đặt đơn hàng mã " + orderId + " tại website.\n- Người nhận: " + name + "\n- SĐT: " + phone + "\n- Địa chỉ: " + address + ", " + province + "\n- Sản phẩm: " + items.map(i => i.name + " (SL: " + i.qty + ")").join(", ") + "\n- Tổng thanh toán: " + UI.formatPrice(subtotal + shipping) + "\n\nVui lòng xác nhận đơn hàng giúp tôi!";
       const zaloBtn = document.getElementById('zalo-confirm-btn');

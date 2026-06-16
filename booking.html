@@ -472,6 +472,26 @@
       };
       const typeText = typeMap[type] || 'Tư vấn CNTT';
 
+      // Send email using FormSubmit AJAX
+      fetch("https://formsubmit.co/ajax/minhminhhungyenco.ltd@gmail.com", {
+        method: "POST",
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          "Tiêu đề": "ĐẶT LỊCH HẸN TƯ VẤN MỚI",
+          "Mã cuộc hẹn": 'BK' + Date.now(),
+          "Họ và tên": name,
+          "Số điện thoại": phone,
+          "Email khách hàng": document.getElementById('b-email').value || 'Không có',
+          "Loại tư vấn": typeText,
+          "Ngày hẹn": date,
+          "Giờ hẹn": time,
+          "Nội dung chi tiết": document.getElementById('b-desc').value || 'Không có'
+        })
+      }).catch(err => console.error("Email send failed:", err));
+
       // Setup Zalo message auto-copy
       const zaloMsg = "Chào Minh Minh Hưng Yên, tôi muốn xác nhận đặt lịch hẹn tư vấn trên website.\n- Họ tên: " + name + "\n- Số điện thoại: " + phone + "\n- Loại tư vấn: " + typeText + "\n- Lịch hẹn: ngày " + date + " lúc " + time + "\n- Nội dung chi tiết: " + (document.getElementById('b-desc').value || 'Không có') + "\n\nVui lòng xác nhận lịch hẹn giúp tôi!";
       

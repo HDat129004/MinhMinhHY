@@ -256,6 +256,38 @@
       });
       localStorage.setItem('mm_contacts', JSON.stringify(contacts));
 
+      // Also save to mm_bookings so it is manageable under consultations in admin
+      const bookings = JSON.parse(localStorage.getItem('mm_bookings') || '[]');
+      bookings.unshift({
+        id: 'BK' + Date.now(),
+        name, phone,
+        email: email || '',
+        type: 'other',
+        date: new Date().toISOString().split('T')[0],
+        time: new Date().toTimeString().slice(0, 5),
+        desc: `[Liên hệ từ trang liên hệ - Tiêu đề: ${subject}] ${message}`,
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+      });
+      localStorage.setItem('mm_bookings', JSON.stringify(bookings));
+
+      // Send to email via FormSubmit AJAX
+      fetch("https://formsubmit.co/ajax/minhminhhungyenco.ltd@gmail.com", {
+        method: "POST",
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          "Tiêu đề": "YÊU CẦU LIÊN HỆ MỚI (Trang Liên Hệ)",
+          "Họ tên": name,
+          "Số điện thoại": phone,
+          "Email liên hệ": email || 'Không có',
+          "Chủ đề liên hệ": subject,
+          "Lời nhắn / Nội dung": message
+        })
+      }).catch(err => console.error("Email send failed:", err));
+
       UI.toast('🎉 Gửi liên hệ thành công! Chúng tôi sẽ phản hồi bạn sớm nhất.', 'success', 5000);
       document.getElementById('contact-form').reset();
       window.scrollTo({ top: 0, behavior: 'smooth' });

@@ -345,16 +345,24 @@
                         <h4 class="fw-bold mb-2">Đăng ký khảo sát thực tế</h4>
                         <p class="text-muted mb-4 small">Chuyên gia của Minh Minh Hưng Yên sẽ liên hệ lại trong vòng 30 phút.</p>
                         
-                        <form action="https://formsubmit.co/minhminhhungyenco.ltd@gmail.com" method="POST">
-                            <input type="hidden" name="_captcha" value="false">
+                        <form id="quote-form" onsubmit="submitQuoteForm(event)" novalidate>
                             <div class="row g-3 mb-3">
-                                <div class="col-md-6"><input type="text" name="Ten_Khach_Hang" class="form-control" placeholder="Tên Doanh nghiệp/Cá nhân *" required></div>
-                                <div class="col-md-6"><input type="tel" name="So_Dien_Thoai" class="form-control" placeholder="Số điện thoại *" required></div>
+                                <div class="col-md-6">
+                                    <input type="text" id="q-name" class="form-control" placeholder="Tên Doanh nghiệp/Cá nhân *" required>
+                                    <div class="form-error text-danger" id="qerr-name" style="font-size:11px; margin-top:4px;"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="tel" id="q-phone" class="form-control" placeholder="Số điện thoại *" required>
+                                    <div class="form-error text-danger" id="qerr-phone" style="font-size:11px; margin-top:4px;"></div>
+                                </div>
                             </div>
                             <div class="row g-3 mb-3">
-                                <div class="col-md-6"><input type="email" name="Email" class="form-control" placeholder="Email liên hệ"></div>
                                 <div class="col-md-6">
-                                    <select name="Dich_Vu_Quan_Tam" class="form-select" required>
+                                    <input type="email" id="q-email" class="form-control" placeholder="Email liên hệ">
+                                    <div class="form-error text-danger" id="qerr-email" style="font-size:11px; margin-top:4px;"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <select id="q-service" class="form-select" required>
                                         <option value="" selected disabled>-- Chọn dịch vụ --</option>
                                         <option value="Hạ tầng Mạng & Viễn thông">Hạ tầng Mạng & Viễn thông</option>
                                         <option value="Camera An ninh & Kiểm soát">Camera An ninh & Kiểm soát</option>
@@ -363,10 +371,12 @@
                                         <option value="Bảo trì & Dịch vụ IT">Bảo trì & Dịch vụ IT</option>
                                         <option value="Giải pháp toàn diện">Tư vấn giải pháp toàn diện</option>
                                     </select>
+                                    <div class="form-error text-danger" id="qerr-service" style="font-size:11px; margin-top:4px;"></div>
                                 </div>
                             </div>
                             <div class="mb-4">
-                                <textarea name="Yeu_Cau_Chi_Tiet" class="form-control" rows="4" placeholder="Nhập yêu cầu (VD: Cần lắp 10 camera cho xưởng, Khảo sát mạng nội bộ...)" required></textarea>
+                                <textarea id="q-desc" class="form-control" rows="4" placeholder="Nhập yêu cầu (VD: Cần lắp 10 camera cho xưởng, Khảo sát mạng nội bộ...)" required></textarea>
+                                <div class="form-error text-danger" id="qerr-desc" style="font-size:11px; margin-top:4px;"></div>
                             </div>
                             <button type="submit" class="btn-modern btn-green w-100 py-3 shadow">Gửi Yêu Cầu Báo Giá</button>
                         </form>
@@ -478,6 +488,81 @@
                 }
             }
         });
+
+        window.submitQuoteForm = function(e) {
+            e.preventDefault();
+            const name = document.getElementById('q-name').value.trim();
+            const phone = document.getElementById('q-phone').value.trim();
+            const email = document.getElementById('q-email').value.trim();
+            const service = document.getElementById('q-service').value;
+            const desc = document.getElementById('q-desc').value.trim();
+
+            ['name','phone','service','desc'].forEach(f => {
+                const el = document.getElementById('qerr-'+f);
+                if (el) el.textContent = '';
+            });
+
+            let valid = true;
+            if (!name) { document.getElementById('qerr-name').textContent = 'Vui lòng nhập họ tên'; valid = false; }
+            if (!phone || !/^(0|\+84)[0-9]{8,9}$/.test(phone.replace(/\s/g,''))) {
+                document.getElementById('qerr-phone').textContent = 'Số điện thoại không hợp lệ'; valid = false;
+            }
+            if (!service) { document.getElementById('qerr-service').textContent = 'Vui lòng chọn dịch vụ'; valid = false; }
+            if (!desc) { document.getElementById('qerr-desc').textContent = 'Vui lòng nhập mô tả yêu cầu'; valid = false; }
+            if (!valid) return;
+
+            // Save to mm_bookings
+            const bookings = JSON.parse(localStorage.getItem('mm_bookings') || '[]');
+            const typeMap = {
+                "Hạ tầng Mạng & Viễn thông": "network",
+                "Camera An ninh & Kiểm soát": "purchase",
+                "Thiết bị CNTT & Máy chủ": "purchase",
+                "Thiết bị Máy Văn phòng": "purchase",
+                "Bảo trì & Dịch vụ IT": "repair",
+                "Giải pháp toàn diện": "other"
+            };
+            const mappedType = typeMap[service] || "other";
+
+            const newBooking = {
+                id: 'BK' + Date.now(),
+                name,
+                phone,
+                email: email || '',
+                type: mappedType,
+                date: new Date().toISOString().split('T')[0],
+                time: new Date().toTimeString().slice(0, 5),
+                desc: `[Đăng ký từ trang chủ - Dịch vụ: ${service}] ${desc}`,
+                status: 'pending',
+                createdAt: new Date().toISOString()
+            };
+
+            bookings.unshift(newBooking);
+            localStorage.setItem('mm_bookings', JSON.stringify(bookings));
+
+            // Send to email via FormSubmit AJAX
+            fetch("https://formsubmit.co/ajax/minhminhhungyenco.ltd@gmail.com", {
+                method: "POST",
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    "Tiêu đề": "YÊU CẦU BÁO GIÁ & TƯ VẤN ĐĂNG KÝ MỚI (Trang chủ)",
+                    "Họ tên": name,
+                    "Số điện thoại": phone,
+                    "Email liên hệ": email || 'Không có',
+                    "Dịch vụ quan tâm": service,
+                    "Mô tả chi tiết": desc
+                })
+            }).then(() => {
+                UI.toast('🎉 Đăng ký tư vấn thành công! Chúng tôi sẽ liên hệ sớm nhất.', 'success', 5000);
+                document.getElementById('quote-form').reset();
+            }).catch(err => {
+                console.error("Email send failed:", err);
+                UI.toast('🎉 Ghi nhận yêu cầu thành công! Đang xử lý liên hệ.', 'success', 5000);
+                document.getElementById('quote-form').reset();
+            });
+        };
     </script>
 </body>
 </html>
