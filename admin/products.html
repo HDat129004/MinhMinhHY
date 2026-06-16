@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../css/main.css" />
   <link rel="stylesheet" href="../css/admin.css" />
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
     /* Status badge */
     .status-badge {
@@ -271,10 +272,14 @@
         <div class="admin-page-title">📦 Quản lý sản phẩm</div>
         <div class="admin-page-subtitle" id="product-subtitle">Đang tải...</div>
       </div>
-      <div class="admin-header-right">
+      <div class="admin-header-right" style="display:flex;gap:12px;">
+        <button class="btn" onclick="triggerImport()" style="background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-secondary);display:flex;align-items:center;gap:8px;">
+          📥 Import Excel/JSON
+        </button>
         <button class="btn btn-primary" onclick="openAddModal()" style="display:flex;align-items:center;gap:8px;">
           ➕ Thêm sản phẩm
         </button>
+        <input type="file" id="import-file-input" accept=".xlsx, .xls, .json" style="display:none;" onchange="handleImportFile(event)">
       </div>
     </header>
 
@@ -434,6 +439,81 @@
         </button>
         <button class="btn btn-primary" onclick="saveProduct()" id="save-btn" style="padding:10px 28px;">
           💾 Lưu sản phẩm
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPORT MODAL -->
+  <div class="modal-overlay" id="import-modal" onclick="handleImportModalOverlayClick(event)">
+    <div class="modal-box" style="max-width: 580px;">
+      <div class="modal-header">
+        <div class="modal-title">📥 Import sản phẩm từ Excel / JSON</div>
+        <button class="modal-close" onclick="closeImportModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:13px; color:var(--text-secondary); margin-bottom:16px; line-height:1.6;">
+          Bạn có thể nhập danh sách sản phẩm nhanh chóng bằng cách tải lên tệp tin **Excel (.xlsx, .xls)** hoặc tệp **JSON (.json)**.
+        </p>
+        
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-elevated); padding:12px 16px; border-radius:var(--radius-md); border:1px solid var(--border); margin-bottom:20px;">
+          <div>
+            <div style="font-size:14px; font-weight:700; color:var(--text-primary);">Mẫu file Excel chuẩn</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Tải file mẫu để nhập đúng cấu trúc cột</div>
+          </div>
+          <button class="btn btn-sm" onclick="downloadExcelTemplate()" style="background:var(--gold-glow); border:1px solid var(--border-gold); color:var(--gold); font-weight:700;">
+            📥 Tải File Mẫu
+          </button>
+        </div>
+
+        <div class="form-group" style="margin-bottom:20px;">
+          <label class="form-label">Chế độ nhập dữ liệu</label>
+          <div style="display:flex; flex-direction:column; gap:10px; margin-top:8px;">
+            <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-secondary); cursor:pointer;">
+              <input type="radio" name="import-mode" value="append" checked style="accent-color:var(--gold); margin:0;">
+              <span><strong>Thêm tiếp:</strong> Giữ nguyên các sản phẩm hiện có và thêm sản phẩm mới.</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-secondary); cursor:pointer;">
+              <input type="radio" name="import-mode" value="overwrite" style="accent-color:var(--gold); margin:0;">
+              <span><strong>Ghi đè:</strong> <span style="color:var(--error);">Xóa sạch</span> toàn bộ sản phẩm hiện tại và nạp danh sách mới.</span>
+            </label>
+          </div>
+        </div>
+
+        <div style="border: 2px dashed var(--border); border-radius: var(--radius-lg); padding: 32px 16px; text-align: center; cursor: pointer; transition: 0.2s;" 
+             onclick="document.getElementById('import-file-input').click()"
+             onmouseover="this.style.borderColor='var(--gold)';"
+             onmouseout="this.style.borderColor='var(--border)';"
+             id="drop-zone">
+          <div style="font-size:40px; margin-bottom:12px;">📁</div>
+          <div style="font-size:14px; font-weight:700; color:var(--text-primary);">Nhấn vào đây để chọn tệp tin</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">Chấp nhận file .xlsx, .xls, .json</div>
+        </div>
+
+        <!-- Preview area -->
+        <div id="import-preview-area" style="display:none; margin-top:20px;">
+          <div style="font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:8px;" id="preview-title">Xem trước dữ liệu</div>
+          <div style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius-md); background:var(--bg-elevated); padding:8px;">
+            <table style="width:100%; border-collapse:collapse; font-size:12px; text-align:left;">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border); color:var(--text-muted);">
+                  <th style="padding:6px;">Tên</th>
+                  <th style="padding:6px;">Danh mục</th>
+                  <th style="padding:6px; text-align:right;">Giá</th>
+                </tr>
+              </thead>
+              <tbody id="import-preview-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-overlay-close-btn" style="display:none;"></div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeImportModal()" style="background:var(--bg-elevated); border:1px solid var(--border); color:var(--text-secondary); padding:10px 24px; border-radius:var(--radius-md); font-weight:600;">
+          Hủy
+        </button>
+        <button class="btn btn-primary" onclick="confirmImport()" id="confirm-import-btn" disabled style="padding:10px 28px; opacity:0.5; cursor:not-allowed;">
+          💾 Xác nhận Import
         </button>
       </div>
     </div>
@@ -625,6 +705,182 @@
       }
 
       closeModal();
+      loadProducts();
+    }
+
+    // ---- Import Excel / JSON ----
+    let parsedProducts = [];
+
+    function triggerImport() {
+      document.getElementById('import-file-input').value = '';
+      parsedProducts = [];
+      document.getElementById('import-preview-area').style.display = 'none';
+      const confirmBtn = document.getElementById('confirm-import-btn');
+      confirmBtn.disabled = true;
+      confirmBtn.style.opacity = '0.5';
+      confirmBtn.style.cursor = 'not-allowed';
+      
+      document.getElementById('import-modal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeImportModal() {
+      document.getElementById('import-modal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function handleImportModalOverlayClick(e) {
+      if (e.target === document.getElementById('import-modal')) closeImportModal();
+    }
+
+    function downloadExcelTemplate() {
+      const headers = [
+        ["Tên sản phẩm (*)", "Danh mục (*)", "Thương hiệu", "Giá bán (VNĐ)", "Giá gốc (VNĐ)", "Tồn kho", "Mô tả", "Thông số kỹ thuật", "Icon Emoji", "Trạng thái (Đang bán/Ngừng bán)"]
+      ];
+      const sampleRows = [
+        ["Router Wi-Fi 6 Ruijie Reyee", "Mạng & Viễn thông", "Ruijie", 2450000, 3100000, 15, "Router tốc độ cao chịu tải 100+ user", "Chuẩn Wi-Fi: Wi-Fi 6, Tốc độ: 3200 Mbps", "📶", "Đang bán"],
+        ["Camera Dome Hikvision 2MP", "Camera", "Hikvision", 650000, 850000, 25, "Camera quan sát Dome hồng ngoại", "Độ phân giải: 2.0 Megapixel", "📷", "Đang bán"],
+        ["Máy in Laser Canon", "Máy in & Thiết bị", "Canon", 0, 0, 7, "Máy in laser đen trắng", "Tốc độ: 28 trang/phút", "🖨️", "Đang bán"]
+      ];
+      
+      const ws = XLSX.utils.aoa_to_sheet(headers.concat(sampleRows));
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Template_MinhMinh");
+      XLSX.writeFile(wb, "mau_nhap_san_pham_minhminh.xlsx");
+    }
+
+    function handleImportFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      
+      if (file.name.endsWith('.json')) {
+        reader.onload = function(evt) {
+          try {
+            const json = JSON.parse(evt.target.result);
+            const list = Array.isArray(json) ? json : (json.products || []);
+            processImportList(list);
+          } catch (err) {
+            alert('Tệp tin JSON không hợp lệ hoặc sai cấu trúc.');
+          }
+        };
+        reader.readAsText(file);
+      } else {
+        // Excel file
+        reader.onload = function(evt) {
+          try {
+            const data = new Uint8Array(evt.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            const rows = XLSX.utils.sheet_to_json(sheet);
+            
+            const list = rows.map(row => {
+              const name = row['Tên sản phẩm (*)'] || row['Tên sản phẩm'] || row['Tên'] || '';
+              const category = row['Danh mục (*)'] || row['Danh mục'] || '';
+              const brand = row['Thương hiệu'] || row['Hãng'] || '';
+              const price = parseFloat(row['Giá bán (VNĐ)'] || row['Giá bán'] || row['Giá'] || 0) || 0;
+              const originalPrice = parseFloat(row['Giá gốc (VNĐ)'] || row['Giá gốc'] || 0) || 0;
+              const stock = parseInt(row['Tồn kho'] || row['Số lượng'] || 0) || 0;
+              const description = row['Mô tả'] || row['Chi tiết'] || '';
+              const emojiIcon = row['Icon Emoji'] || row['Icon'] || '📦';
+              const activeStr = String(row['Trạng thái (Đang bán/Ngừng bán)'] || row['Trạng thái'] || 'Đang bán').trim();
+              const active = activeStr !== 'Ngừng bán' && activeStr !== 'inactive' && activeStr !== 'Tắt';
+              
+              const specsRaw = row['Thông số kỹ thuật'] || row['Thông số'] || '';
+              let specs = {};
+              if (specsRaw) {
+                if (typeof specsRaw === 'string') {
+                  if (specsRaw.trim().startsWith('{')) {
+                    try { specs = JSON.parse(specsRaw); } catch(e) {}
+                  } else {
+                    specsRaw.split(',').forEach(part => {
+                      const parts = part.split(':');
+                      if (parts.length >= 2) {
+                        specs[parts[0].trim()] = parts.slice(1).join(':').trim();
+                      }
+                    });
+                  }
+                } else if (typeof specsRaw === 'object') {
+                  specs = specsRaw;
+                }
+              }
+              
+              return {
+                name: name.trim(),
+                category: category.trim(),
+                brand: brand.trim(),
+                price,
+                originalPrice,
+                stock,
+                images: [emojiIcon.trim() || '📦'],
+                description: description.trim(),
+                specs,
+                active,
+                featured: false
+              };
+            });
+            
+            processImportList(list);
+          } catch (err) {
+            console.error(err);
+            alert('Có lỗi xảy ra khi đọc tệp tin Excel.');
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      }
+    }
+
+    function processImportList(list) {
+      parsedProducts = list.filter(p => p.name && p.category);
+      
+      if (parsedProducts.length === 0) {
+        alert('Không tìm thấy sản phẩm nào hợp lệ (phải có Tên sản phẩm và Danh mục).');
+        return;
+      }
+      
+      const previewTbody = document.getElementById('import-preview-tbody');
+      previewTbody.innerHTML = parsedProducts.slice(0, 5).map(p => `
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <td style="padding:6px; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+            ${p.images?.[0] || '📦'} ${p.name}
+          </td>
+          <td style="padding:6px; color:var(--text-secondary);">${p.category}</td>
+          <td style="padding:6px; text-align:right; font-weight:700; color:var(--gold);">
+            ${p.price === 0 ? 'Liên hệ' : UI.formatPrice(p.price)}
+          </td>
+        </tr>
+      `).join('');
+      
+      document.getElementById('preview-title').textContent = `Xem trước dữ liệu (Tìm thấy ${parsedProducts.length} sản phẩm)`;
+      document.getElementById('import-preview-area').style.display = 'block';
+      
+      const confirmBtn = document.getElementById('confirm-import-btn');
+      confirmBtn.disabled = false;
+      confirmBtn.style.opacity = '1';
+      confirmBtn.style.cursor = 'pointer';
+    }
+
+    function confirmImport() {
+      if (parsedProducts.length === 0) return;
+      
+      const mode = document.querySelector('input[name="import-mode"]:checked').value;
+      let currentProducts = mode === 'overwrite' ? [] : Store.getProducts();
+      
+      const newProducts = parsedProducts.map((p, idx) => {
+        return {
+          ...p,
+          id: UI.genId('prod'),
+          createdAt: new Date(Date.now() + idx * 1000).toISOString()
+        };
+      });
+      
+      const merged = newProducts.concat(currentProducts);
+      Store.setProducts(merged);
+      
+      UI.toast(`Đã import thành công ${newProducts.length} sản phẩm!`, 'success');
+      closeImportModal();
       loadProducts();
     }
 
