@@ -515,10 +515,7 @@ const Compare = {
   },
 
   updateStickyBar() {
-    const keys = this.getKeys();
-    
-    // Skip rendering sticky bar on compare.html itself
-    if (window.location.pathname.includes('compare.html')) return;
+    return; // Comparison feature disabled
 
     const bar = document.getElementById('compare-sticky-bar') || (() => {
       const el = document.createElement('div');
@@ -681,10 +678,6 @@ function renderProductCard(product) {
     <div class="product-card animate-fadeInUp" onclick="window.location='product.html?id=${product.id}'">
       <div class="product-img-wrapper" style="position: relative;">
         ${imgContent}
-        <div style="position: absolute; top: 12px; right: 12px; z-index: 10; background: rgba(255, 255, 255, 0.95); padding: 4px 8px; border-radius: 6px; display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.12); border: 1px solid var(--border);" onclick="event.stopPropagation();">
-          <input type="checkbox" class="compare-checkbox" data-id="${product.id}" onchange="toggleCompareProduct('${product.id}', this)" ${Compare.isAdded(product.id) ? 'checked' : ''} style="width:14px; height:14px; accent-color: var(--orange); cursor: pointer; margin: 0;">
-          <span style="color: var(--text-primary); user-select: none;">So sánh</span>
-        </div>
       </div>
       <div class="product-card-body">
         <div class="product-card-brand">${product.brand}</div>
